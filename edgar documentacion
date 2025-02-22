@@ -1,0 +1,44 @@
+saas.code-workspace es donde se salva el ambiente de vs (file save as workspace)
+
+
+pip install -r requirements.txt
+
+Django-5.1.6
+
+(inside src folder)
+django-admin startproject secuvast 
+
+
+
+en los URLS pattern de (URLS.py) convocan las funciones que esten en views.py
+
+
+
+Los templates son llamados desde la funcion template y tipificando el Base_dir del settings under secuvast
+siempre lo ideal es tenerlos agrupados en la misma carpeta
+
+****************************************
+las funciones en las html en django se usan con doble llave {{ }}
+
+como por ejemplo 
+
+en la funcion en las views.py 
+
+def home_view(request, *args, **kwargs):
+    if request.user.is_authenticated:
+        print(request.user.first_name)
+    return about_view(request, *args, **kwargs)
+
+
+    se invoca el request
+ 
+y en el HTML se puede llamar usando {{request.user}} o cualquier otra funcion referente a request 
+
+inclusive se puede hacer una funcion en las views.py y despues llamarla en el HTML {{cualquiercosa}}
+
+****************************************
+
+python manage.py startapp visits 
+
+
+
