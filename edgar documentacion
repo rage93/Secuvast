@@ -41,5 +41,35 @@ inclusive se puede hacer una funcion en las views.py y despues llamarla en el HT
 python manage.py startapp visits 
 
 
-1:42:00
+**************
+
+python-decouple (requirements)
+
+esto en el settings o cualquier otro codigo para declarar cuales variables agarrar del .env file 
+
+from decouple import config
+
+DJANGO_DEBUG=False ######(.env)
+DEBUG = config("DJANGO_DEBUG") ## En el codigo
+
+
+***********************************
+python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())' ### create a secret key
+5&j7y3@7884x(708fw6w^w3b^12%+4+l=#b98#)y5m1@@mi#@)
+
+****************************************
+requirements para la base de datos
+
+psycopg[binary] para user el postgresql
+
+dj-database-url para hacer elk parsing de el link de la database que viene de neon
+
+2:12:00 habla sobre Neon y su consola
+
+https://console.neon.tech/app/projects/summer-forest-37853460?branchId=br-orange-resonance-a5vtoa9l&database=neondb
+
+Con las Branch podemos usar un staging para hacer development y no tocas prod
+**********************************
+2:37:00
 https://www.youtube.com/watch?v=WbNNESIxJnY&t=3223s&ab_channel=CodingEntrepreneurs
+

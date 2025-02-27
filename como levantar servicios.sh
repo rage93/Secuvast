@@ -9,7 +9,8 @@ cd /root/dev/saas
 
 source venv/bin/activate
 
-cd /src
+cd src/
+
 
 python manage.py runserver
 
