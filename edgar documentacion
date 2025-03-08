@@ -70,6 +70,31 @@ https://console.neon.tech/app/projects/summer-forest-37853460?branchId=br-orange
 
 Con las Branch podemos usar un staging para hacer development y no tocas prod
 **********************************
-2:37:00
+
+Request de los requirements es para descargar los CSS y JS localmente sin 
+nesecidad de tenerlo necesariamente descargado
+
+Todo esto esta en helpers/downloader.property
+
+
+
+
+
+
+*******************************************
+
+en el min 2:43:30 +- el crea una app para que corra una funcion 
+podria usarse para correr los pentest?
+
+
+el creo una app usando python manage.py startapp commando
+creo varios archivos adentro con el __init__.py t creo el vendor_pull.py
+interesante que despues lo activa en consola usando python manage.py vendor_pull
+
+
+
+*******************************************
+
+2:43:00
 https://www.youtube.com/watch?v=WbNNESIxJnY&t=3223s&ab_channel=CodingEntrepreneurs
 
