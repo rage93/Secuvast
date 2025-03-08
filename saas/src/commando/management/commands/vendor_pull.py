@@ -6,10 +6,11 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 STATICFILES_VENDOR_DIR = getattr(settings, 'STATICFILES_VENDOR_DIR')
-
+#this download the files
 VENDOR_STATICFILES = {
     "flowbite.min.css": "https://cdnjs.cloudfare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css",
     "flowbite.min.js": "https://cdnjs.cloudfare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js",
+    "flowbite.min.js.map": "https://cdnjs.cloudfare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js.map",
 }
 
 class Command(BaseCommand):

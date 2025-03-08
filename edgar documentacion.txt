@@ -1,4 +1,4 @@
-saas.code-workspace es donde se salva el ambiente de vs (file save as workspace)
+saas.code-workspace es donde se salva el ambiente de vs (file save as workspace) # type: ignore
 
 
 pip install -r requirements.txt
@@ -91,10 +91,33 @@ el creo una app usando python manage.py startapp commando
 creo varios archivos adentro con el __init__.py t creo el vendor_pull.py
 interesante que despues lo activa en consola usando python manage.py vendor_pull
 
+*******************************************
+EL dice que moverse de white noise a django-storages es mejor en el futuro
+*******************************************
+
+
 
 
 *******************************************
 
-2:43:00
+
+3:20:00
 https://www.youtube.com/watch?v=WbNNESIxJnY&t=3223s&ab_channel=CodingEntrepreneurs
 
+https://github.com/codingforentrepreneurs/SaaS-for-Enterprise-with-Django/tree/main
+
+
+
+
+
+
+
+***************************
+gmail
+rjai druq drjq wszf
+https://www.codingforentrepreneurs.com/blog/sending-email-in-django-from-gmail
+
+
+Podriamos crear otro app para usar en development
+
+***************************
