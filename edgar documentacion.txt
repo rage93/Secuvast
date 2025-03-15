@@ -121,3 +121,17 @@ https://www.codingforentrepreneurs.com/blog/sending-email-in-django-from-gmail
 Podriamos crear otro app para usar en development
 
 ***************************
+
+Para todo lo de los registros y login
+https://docs.allauth.org/
+
+
+al agregar en el settings en las apps y el midddleware no esatamos seguros de cual exactamente
+se creo el social accounts en el admin panel 
+"allauth.account.middleware.AccountMiddleware",
+
+apps
+'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+***********************
