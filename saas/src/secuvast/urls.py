@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import home_view, about_view
 from auth import views as auth_views
+from .views import index
 
 urlpatterns = [
     path("", home_view), #index> home
@@ -27,4 +28,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     path('login/', auth_views.login_view),
+    
     ]

@@ -135,3 +135,26 @@ apps
     'allauth.account',
     'allauth.socialaccount',
 ***********************
+
+Estamos usando nuestros Archivos locales para los static por que nos da la ventaja de no tener dependencia de externos.
+
+En caso de que queramos usar los cdn para que todo cargue mas rapido tendriamos que poner en los template lo que esta abajo 
+
+Solución intermedia: Usar un CDN con un fallback local
+Si quieres lo mejor de ambos mundos (el rendimiento de un CDN y la fiabilidad de tener una copia local en caso de que el CDN falle), puedes usar un fallback. Esto significa que intentas cargar el archivo desde el CDN, y si por alguna razón no se puede cargar (por ejemplo, si el CDN no está disponible), se carga desde un archivo local.
+
+Aquí tienes un ejemplo de cómo hacerlo:
+
+html
+Copy
+<script src="https://cdn.jsdelivr.net/npm/flowbite@1.0.0/dist/flowbite.min.js"></script>
+<script>
+    if (typeof Flowbite === 'undefined') {
+        // Si el CDN no carga, carga el archivo local
+        var script = document.createElement('script');
+        script.src = "{% static 'vendors/flowbite.min.js' %}";
+        document.head.appendChild(script);
+    }
+</script>
+
+***********************

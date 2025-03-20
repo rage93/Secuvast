@@ -32,3 +32,6 @@ def about_view(request, *args, **kwargs):
     html_template = "home.html"
     PageVisit.objects.create(path=request.path) 
     return render (request, html_template, my_context)
+
+def index(request):
+    return render(request, 'index.html')
