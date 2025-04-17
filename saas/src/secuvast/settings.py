@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from decouple import config # type: ignore
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -64,16 +65,20 @@ INSTALLED_APPS = [
     "visits",
     "commando",
     "helpers",
+    "profiles",
     #Thirdparty
     "allauth_ui",
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    "allauth.socialaccount.providers.github",
     "widget_tweaks",
     "slippers",
     'compressor',
     
 ]
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -106,6 +111,8 @@ TEMPLATES = [
         },
     },
 ]
+
+ALLAUTH_UI_THEME = "dark"
 
 WSGI_APPLICATION = 'secuvast.wsgi.application'
 
@@ -153,11 +160,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 # Django Allauth Config 
+LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/" #HERE WE HAVE TO PUT Where the page is going to be redirected after the user login
-ACCOUNT_AUTHENTICATION_METHOD = "username"
-ACCOUNT_EMAIL_VERIFICATION="mandatory"
+ACCOUNT_LOGIN_METHODS = {
+    "email",
+}
+ACCOUNT_EMAIL_VERIFICATION="optional"
 ACCOUNT_EMAIL_SUBJECT_PREFIX="[Secuvast] "
-ACCOUNT_EMAIL_REQUIRED=True
+ACCOUNT_SIGNUP_FIELDS= ['email*', 'username*','password1*', 'password2*'] #['email*', 'username*', 'password1*', 'password2*'] if we need to requiree another field
+
 
 
 AUTHENTICATION_BACKENDS = [

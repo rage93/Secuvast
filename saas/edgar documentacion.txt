@@ -158,3 +158,112 @@ Copy
 </script>
 
 ***********************
+WARNINGS:
+?: (slippers.E001) Slippers was unable to find a components.yaml file.
+        HINT: Make sure it's in a root template directory.
+ 
+Esto se soluciona creadno components.yaml en /src//templates
+Con esto>
+
+paths:
+  - components
+
+  
+***********************
+
+?: settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'username'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+***********************
+"GET /static/allauth_ui/output.css HTTP/1.1" 404 1877
+***********************
+Temas para el accounts/etc
+
+ login
+https://daisyui.com/docs/themes/
+
+
+
+***********************
+Usamos esta version por que una mayor da problemas con un output.css que no existe
+django-allauth-ui==1.5.3
+
+***********************
+
+
+Todo lo relacionado a los login de Allauth estan aqui 
+/root/dev/saas/venv/lib/python3.12/site-packages/allauth/templates/allauth
+
+esto es el virtual env entonces si queremos hacer alguna mofdificacion en nuestro codifo perse
+no es buena practica hacer el cambio ahi ya que al tener otro virtual env se perderia
+entonces se crea una nueva carpeta segun se la directorio por ejemplo los templates es muiy buen ejemplo
+
+nosotros creamos 
+allauth/templates/allauth/layouts 
+y ahi replicamos el base.html y agregamos el nuestro para que lo extienda 
+
+***********************
+En el navbar tenemos los estilos de los menus y donde se pueden cambiar el logo.
+Aparte estan que opciones del menu pueda ver el usuario
+dependiendo si esta autenticado
+
+***********************
+
+the message for sigin and signout 
+{% include 'base/messages.html' with messages=messages %}
+This is added in base.html
+***********************
+
+accounts/ login/ [name='account_login']
+accounts/ logout/ [name='account_logout']
+accounts/ inactive/ [name='account_inactive']
+accounts/ signup/ [name='account_signup']
+accounts/ reauthenticate/ [name='account_reauthenticate']
+accounts/ email/ [name='account_email']
+accounts/ confirm-email/ [name='account_email_verification_sent']
+accounts/ ^confirm-email/(?P<key>[-:\w]+)/$ [name='account_confirm_email']
+accounts/ password/change/ [name='account_change_password']
+accounts/ password/set/ [name='account_set_password']
+accounts/ password/reset/ [name='account_reset_password']
+accounts/ login/code/confirm/ [name='account_confirm_login_code']
+accounts/ password/reset/key/done/ [name='account_reset_password_from_key_done']
+accounts/ ^password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$ [name='account_reset_password_from_key']
+accounts/ password/reset/done/ [name='account_reset_password_done']
+accounts/ 3rdparty/
+accounts/ social/login/cancelled/
+accounts/ social/login/error/
+accounts/ social/signup/
+accounts/ social/connections/
+accounts/ github/
+
+***********************
+
+4:35:00 hace el social account para el github para poder hacer login
+en el futuro capaz podriamos usar google 
+
+***********************
+
+
+4:45:00 el limita las vistas de las paginas conn una autorizacion basica
+simplemente quien es usuario poniendo un codigo predefinido puede o no accedewr al sitio
+
+**********************
+
+
+el usa un decorator del contrib para habiliatar el from django.contrib.auth.decorators import login_required
+@login_required
+
+
+
+
+
+
+**********************
+
+En cualquier def de las views hara que se requiera la autenticado del usuario 
+@login_required
+
+
+**********************
+
+
+5:20

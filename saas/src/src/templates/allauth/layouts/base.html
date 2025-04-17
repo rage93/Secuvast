@@ -1,0 +1,19 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block head_title %}{{ site_name }}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    {% block body %}
+    <div class="container mx-auto px-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+    {% endblock %}
+    {% block extra_body %}{% endblock %}
+</body>
+</html>
