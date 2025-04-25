@@ -266,4 +266,41 @@ En cualquier def de las views hara que se requiera la autenticado del usuario
 **********************
 
 
-5:20
+Profiles list.html tambien hay que darle un sentido logico,
+
+
+**********************
+
+Profiles detail.html tiene que ser nutrido con informacion relevant
+al usuario
+**********************
+5:37 el crea los modelos en una nueva app called subsscription 
+y ahi agrega como van a ser los modelos de subsscription
+Las clases que agrega en los modelos.py se reflejan en el admin de django
+
+Cada vez que se haga un cambio en los models hay que hacer el 
+Python manage.py makemigrations
+python manage.py migrate 
+
+
+
+**********************
+
+5:41:25
+
+
+**********************
+
+SE creo un nuevo comando en el manage
+para recuperar las subs por si se borran los permisos 
+
+python manage.py sync_subs
+
+Lo que se especifique en Subscription en Subscription del admin portal esos permisos 
+son los que se van a mantener en el dado caso de que algun grupo pierda permisos 
+se recuperaran dandolos con el comando 
+
+por ejemplo si un usuario que tiene un advance esta en ese grupo con esos permisos 
+pero si por algun motivo pierde ese grupo los permisos asi es como lo 
+restaurariamos
+**********************

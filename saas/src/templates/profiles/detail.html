@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head_title %}Users - {{ block.super }}{% endblock head_title %}
+
+{% block content %}
+<!--    [if perms.auth or owner]  This was in the code but I dont know the really value of doing this -->
+  {% if perms.auth.view_user or owner %}
+    <h1 class="text-lg font-medium">{{ instance.username }}</h1>
+    <div>
+        {{ instance.first_name }} -  {{ instance.last_name }}
+        {{ instance.last_login }}
+    </div>
+  {% else %}
+    <div class="text-red-600 font-semibold">You are not allowed to see this</div>
+  {% endif %}
+
+  
+{% endblock %}
