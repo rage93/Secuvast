@@ -304,3 +304,23 @@ por ejemplo si un usuario que tiene un advance esta en ese grupo con esos permis
 pero si por algun motivo pierde ese grupo los permisos asi es como lo 
 restaurariamos
 **********************
+
+deberiamos agregar mas meta data en customers/models.py para ir nutriendo mejor lo que vemos en stripe y que
+tambien sea mas facil a la hora de hacer troubleshooting
+
+stripe_id = helpers.billing.create_customer(email=email,metadata={
+                        "user_id": self.user.id, 
+                        "username": self.user.username
+                    }, raw=False)
+
+
+
+
+
+
+**********************
+
+
+
+En los precios de las subs al selecionar el featured
+ solo puede haber 1 mensual y/o anual
