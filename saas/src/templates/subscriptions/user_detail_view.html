@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{# ^^^ NOTA: Cambié esto a 'dashboard/base.html' como sugeriste. 
+    Esto asume que tienes una plantilla base diferente para el panel de control. 
+    Si no es así, simplemente vuelve a cambiarlo a 'base.html'. #}
+
+{% block head_title %}Your Subscription - {{ block.super }}{% endblock head_title %}
+
+{% block page_header %}
+    Your Subscription
+{% endblock page_header %}
+
+
+{% block content %}
+<div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
+    
+    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold leading-6 text-gray-900 dark:text-white">
+                {# CORREGIDO: El nombre del plan viene del objeto anidado 'subscription' #}
+                {{ subscription.subscription.name }} Plan
+            </h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                    Refresh Details
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="px-4 py-5 sm:p-6">
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+            
+            <div class="sm:col-span-1">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                    {# Insignia de estado dinámica que cambia de color #}
+                    {% if subscription.is_active_status %}
+                        <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                            Active
+                        </span>
+                    {% elif subscription.cancel_at_period_end %}
+                         <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                            Cancels on {{ subscription.current_period_end|date:"F j, Y" }}
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                           {{ subscription.status|title }}
+                        </span>
+                    {% endif %}
+                </dd>
+            </div>
+
+            <div class="sm:col-span-1">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Next Renewal Date</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                    {{ subscription.current_period_end|date:"F j, Y" }}
+                </dd>
+            </div>
+
+            <div class="sm:col-span-1">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Subscribed On</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                     {{ subscription.current_period_start|date:"F j, Y" }}
+                </dd>
+            </div>
+
+            <div class="sm:col-span-1">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Member Since</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                    {{ subscription.original_period_start|timesince }} ago
+                </dd>
+            </div>
+
+        </dl>
+    </div>
+</div>
+
+
+<div class="mt-8 bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
+     <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Cancel Subscription</h3>
+        <div class="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
+            <p>
+                If you cancel your plan, you will lose access to all premium features at the end of your current billing period on <strong>{{ subscription.current_period_end|date:"F j, Y" }}</strong>.
+            </p>
+        </div>
+        <div class="mt-5">
+            {# NOTA: Asegúrate de que tu URL para cancelar se llame 'user_subscription_cancel' en urls.py #}
+            <a href="{% url 'user_subscription_cancel' %}" class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
+                Proceed with Cancellation
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
