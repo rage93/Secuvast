@@ -3,10 +3,10 @@ name: Django CI/CD Pipeline
 on:
   push:
     branches:
-      - Secuvast-Prod # O la rama principal de tu código, ej: "main"
+      - main # O la rama principal de tu código, ej: "main"
   pull_request:
     branches:
-      - Secuvast-Prod # O la rama principal de tu código, ej: "main"
+      - main # O la rama principal de tu código, ej: "main"
 
 jobs:
   build-and-test:
