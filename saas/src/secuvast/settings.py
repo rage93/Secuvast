@@ -122,30 +122,49 @@ ALLAUTH_UI_THEME = "dark"
 WSGI_APPLICATION = 'secuvast.wsgi.application'
 
 
-# Database
+# ==============================================================================
+# DATABASE CONFIGURATION
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# ==============================================================================
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=300)
 DATABASE_URL = config("DATABASE_URL", default=None)
+CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=300)
 
-if DATABASE_URL is not None:
-    import dj_database_url # type: ignore
-    DATABASES = {
-        "default": dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=CONN_MAX_AGE,
-            conn_health_checks=True,
-            
-        ),
+# Esta lógica maneja tanto la configuración para producción (Neon/PostgreSQL)
+# como la local (SQLite) y asegura que los settings de TEST siempre se apliquen.
+
+if DATABASE_URL:
+    # --- Configuración para Producción/Neon ---
+    import dj_database_url
+    
+    # 1. Carga la configuración base desde la variable de entorno
+    db_config = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=CONN_MAX_AGE,
+        conn_health_checks=True,
+    )
+    
+    # 2. Añade la configuración de TEST a la configuración de Neon
+    db_config['TEST'] = {
+        'ATOMIC_REQUESTS': True,
     }
 
+    DATABASES = {'default': db_config}
+
+else:
+    # --- Configuración para Desarrollo Local (si no hay DATABASE_URL) ---
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+            # Añadimos la configuración de TEST aquí también
+            'TEST': {
+                'ATOMIC_REQUESTS': True,
+            }
+        }
+    }
+
+# ==============================================================================
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
