@@ -11,13 +11,7 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    env:
-      DJANGO_DEBUG: 'False'
-      DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }} #This is the Test Database URL from Neon, Secret storage in Github Action Secrets
-      NEON_API_KEY: ${{ secrets.NEON_API_KEY }} #This is the Neon API Key, Secret storage in Github Action Secrets
-      NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }} #This is the Neon Project ID, Secret storage in Github Action Secrets
-      NEON_GIT_BRANCH: 'Secuvast-Test-Delete' #This is the branch of the Neon Database
-      NEON_PROD_BRANCH: 'Secuvast-Prod' #This is the branch of the Neon Database
+    
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
@@ -33,48 +27,63 @@ jobs:
           node-version: '20.11'
 
       - name: Install Neon CLI
-        run: |
-          npm install -g neonctl
+        run: npm install -g neonctl
       
-      - name: Delete previous Neon Database Branch
-        continue-on-error: true
-        run: |
-          neonctl branches delete "${{env.NEON_GIT_BRANCH}}"  --project-id "${{env.NEON_PROJECT_ID}}" 
+      - name: Delete previous Test Branch
+        continue-on-error: true # This is good practice
+        run: neonctl branches delete "${{env.NEON_GIT_BRANCH}}" --project-id "${{secrets.NEON_PROJECT_ID}}"
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_GIT_BRANCH: 'Secuvast-Test-Delete' # Branch to create/delete
 
-      - name: Create new Github Actions branch
+      - name: Create Neon Test Branch
         run: |
-          neonctl branches create --name "${{env.NEON_GIT_BRANCH}}" --parent "${{env.NEON_PROD_BRANCH}}" --project-id "${{env.NEON_PROJECT_ID}}"
+          neonctl branches create \
+            --name "${{env.NEON_GIT_BRANCH}}" \
+            --parent "${{env.NEON_PROD_BRANCH}}" \
+            --project-id "${{secrets.NEON_PROJECT_ID}}"
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_GIT_BRANCH: 'Secuvast-Test-Delete'
+          NEON_PROD_BRANCH: 'Secuvast-Prod' # The name of your main DB branch on Neon
 
-      - name: Database URL ENV val for new Github Actions branch
+      - name: Get Database URL for Test Branch
+        id: get_db_url # Give this step an ID
         run: |
-          MY_NEON_CONN_STRING=$(neonctl connection-string --branch "${{env.NEON_GIT_BRANCH}}" --parent "${{env.NEON_PROD_BRANCH}}" --project-id "${{env.NEON_PROJECT_ID}}")
-          echo "DATABASE_URL=$MY_NEON_CONN_STRING" >> $GITHUB_ENV
+          # CORRECTION: Add the --database-name option
+          DB_URL=$(neonctl connection-string \
+            --branch "${{env.NEON_GIT_BRANCH}}" \
+            --database-name "neondb" \
+            --project-id "${{secrets.NEON_PROJECT_ID}}")
+          
+          # This sets the URL for all subsequent steps
+          echo "DATABASE_URL=$DB_URL" >> $GITHUB_ENV
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_GIT_BRANCH: 'Secuvast-Test-Delete'
+
       - name: Setup Django Secret Key
-        run: |
-          mykey=$(openssl rand -base64 32)
-          echo "DJANGO_SECRET_KEY=$mykey" >> $GITHUB_ENV
-
-      - name: Show Environment Variables
-        run: |
-          echo ${{ env.DATABASE_URL }}
-          echo $DATABASE_URL
+        run: echo "DJANGO_SECRET_KEY=$(openssl rand -base64 32)" >> $GITHUB_ENV
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          # CORRECCIÓN: Apuntamos a la ruta correcta del archivo
           python -m pip install -r saas/requirements.txt
 
       - name: Run Django Tests
-       
+        env:
+          # These variables are now correctly set by the previous steps
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          DJANGO_SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
+          DJANGO_DEBUG: 'False'
         working-directory: ./saas/src
+        run: python manage.py test --keepdb
 
-        run: |
-          python manage.py test --keepdb 
-
-      - name: clean UP Branch
+      - name: Clean Up Test Branch
+        # This step runs even if the tests fail, to avoid leaving zombie branches
+        if: always()
         continue-on-error: true
-        run: |
-          neonctl branches delete "${{env.NEON_GIT_BRANCH}}"  --project-id "${{env.NEON_PROJECT_ID}}"
+        run: neonctl branches delete "${{env.NEON_GIT_BRANCH}}" --project-id "${{secrets.NEON_PROJECT_ID}}"
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_GIT_BRANCH: 'Secuvast-Test-Delete'
