@@ -1,26 +1,41 @@
 name: Django CI
 
-
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
 jobs:
   Test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4 
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'    
+          python-version: '3.12'
+
+     
+      - name: List files in the repository
+        run: ls -laR # El comando -R lista todos los archivos en todas las carpetas
+
       - name: Install requirements
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+          # Le decimos explícitamente que el archivo está en la raíz
+          python -m pip install -r ./requirements.txt
+
       - name: Run tests
-        working-directory: ./saas/src
+        
+        env:
+          DJANGO_SETTINGS_MODULE: saas.src.secuvast.settings 
+          PYTHONPATH: ${{ github.workspace }}/saas/src
         run: |
-          python manage.py test
+          # Ejecutamos manage.py especificando su ruta completa
+          python saas/src/manage.py test
