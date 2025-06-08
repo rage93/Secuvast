@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DJANGO_DEBUG: 'False'
-      DATABASE_URL: ${{ secrets.DATABASE_URL }} #This is the Test Database URL from Neon, Secret storage in Github Action Secrets
+      DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }} #This is the Test Database URL from Neon, Secret storage in Github Action Secrets
       
     steps:
       - name: Checkout repository code
