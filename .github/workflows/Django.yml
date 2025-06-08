@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DJANGO_DEBUG: 'False'
-      #DJANGO_SETTINGS_MODULE: secuvast.settings
+      DATABASE_URL: ${{ secrets.DATABASE_URL }} #This is the Test Database URL from Neon, Secret storage in Github Action Secrets
+      
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
@@ -27,6 +28,11 @@ jobs:
           mykey=$(openssl rand -base64 32)
           echo "DJANGO_SECRET_KEY=$mykey" >> $GITHUB_ENV
 
+      - name: Show Environment Variables
+        run: |
+          echo ${{ env.DATABASE_URL }}
+          echo $DATABASE_URL
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -38,4 +44,4 @@ jobs:
         working-directory: ./saas/src
 
         run: |
-          python manage.py test
+          python manage.py test --keepdb 
