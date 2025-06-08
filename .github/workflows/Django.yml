@@ -3,10 +3,10 @@ name: Django CI/CD
 on:
   push:
     branches:
-      - main
+      - Secuvast-Prod
   pull_request:
     branches:
-      - main
+      - Secuvast-Prod
 
 jobs:
   build-and-test:
@@ -73,7 +73,7 @@ jobs:
 
         run: |
           python manage.py test --keepdb 
-          
+
       - name: clean UP Branch
         continue-on-error: true
         run: |
