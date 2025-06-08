@@ -1,5 +1,5 @@
 name: Django CI/CD Pipeline
-
+ 
 on:
   push:
     branches:
