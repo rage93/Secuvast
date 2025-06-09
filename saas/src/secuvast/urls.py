@@ -21,6 +21,8 @@ from auth import views as auth_views
 from subscriptions import views as subscriptions_views
 from .views import index, pw_protected_view, user_only_view, staff_only_view
 from checkouts import views as checkout_views
+from landing.views import landing_page_view
+from dashboard.views import dashboard_view
 
 urlpatterns = [
     path("checkout/sub-price/<int:price_id>/", 
@@ -35,7 +37,7 @@ urlpatterns = [
             checkout_views.checkout_finalize_view,
             name='stripe-checkout-end'
             ),
-    path("", home_view, name="home"), #index> home
+    path("", landing_page_view, name="home"),  #index> home
     path('hello-world/', home_view),
     #path("register/", auth_views.register_view),
     path('about/', about_view),
@@ -43,6 +45,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     #path('login/', auth_views.login_view),
+    path('dashboard/', dashboard_view, name='dashboard'),
     path('pricing/', subscriptions_views.subscription_price_view, name='pricing'),
     path('accounts/billing/', subscriptions_views.user_subscription_view, name='user_subscription'),
     path('accounts/billing/cancel', subscriptions_views.user_subscription_cancel_view, name='user_subscription_cancel'),

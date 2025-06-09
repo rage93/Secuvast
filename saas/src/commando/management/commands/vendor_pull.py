@@ -7,7 +7,9 @@ from django.core.management.base import BaseCommand
 
 STATICFILES_VENDOR_DIR = getattr(settings, 'STATICFILES_VENDOR_DIR')
 #this download the files
+#needs python manage.py vendor_pull
 VENDOR_STATICFILES = {
+    "saas-theme.min.css": "https://raw.githubusercontent.com/codingforentrepreneurs/SaaS-for-Enterprise-with-Django/refs/heads/main/src/staticfiles/theme/saas-theme.min.css",
     "flowbite.min.css": "https://cdnjs.cloudfare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css",
     "flowbite.min.js": "https://cdnjs.cloudfare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js",
     "flowbite.min.js.map": "https://cdnjs.cloudfare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js.map",
