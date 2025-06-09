@@ -1,12 +1,12 @@
 name: Django CI/CD
-
+#No requerida por los momentos
 on:
   push:
     branches:
-      - main
+    #  - main
   pull_request:
     branches:
-      - main
+    #  - main
 
 jobs:
   build-and-test:

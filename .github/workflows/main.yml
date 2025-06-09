@@ -9,7 +9,7 @@ on:
       - main # Asegúrate que esta sea tu rama principal de código
 
 jobs:
-  build-and-test:
+  build-and-test-Main:
     runs-on: ubuntu-latest
 
     # Definimos las variables que nos diste para que estén disponibles en todo el job
@@ -86,6 +86,7 @@ jobs:
       - name: Clean Up Test Branch on Neon
         if: always() # Se ejecuta siempre, incluso si los tests fallan
         run: |
+
           neonctl branches delete "${{ env.NEON_TEST_BRANCH }}" \
             --project-id "${{ secrets.NEON_PROJECT_ID }}"
         env:
