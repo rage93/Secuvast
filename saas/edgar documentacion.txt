@@ -375,3 +375,8 @@ PAra limpiar las subscripciones duplicadas o colgando
 
 
 ***********************
+
+
+Se deberia agregar tambien en github actions los Secret y valors para correo para hacer la aplicacion lo mas cercana a como esta en local
+
+***********************

@@ -1,7 +1,11 @@
 name: Django CI/CD Pipeline
 
 on:
-  push:
+    workflow_dispatch: # Permite ejecutar manualmente el workflow desde la interfaz de GitHub
+    # Puedes ejecutar este workflow manualmente desde la interfaz de GitHub
+    scheduler:
+      - cron: '0 1,12 * * *' # Ejecuta el workflow a las 01:00 AM y 12:00 PM todos los días
+      - cron: '0 4 1 * *' # Ejecuta el workflow a las 05:30 AM los lunes, miércoles y viernes 
     branches:
       - main # Asegúrate que esta sea tu rama principal de código
   pull_request:
@@ -14,9 +18,11 @@ jobs:
 
     # Definimos las variables que nos diste para que estén disponibles en todo el job
     env:
-      DJANGO_DEBUG: 'False'
+      DJANGO_DEBUG: 0 # Asegúrate de que esta variable esté definida en los secretos de GitHub (True)
+      STRIPE_TEST_OVERRIDE: 'True' 
       NEON_TEST_BRANCH: 'Secuvast-Test-Delete'  # El nombre de tu rama de prueba en Neon
       NEON_PROD_BRANCH: 'Secuvast-Prod'       # El nombre de tu rama principal en Neon
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }} # Clave de API de Stripe, almacenada en los secretos de GitHub
 
     steps:
       - name: Checkout repository code
@@ -36,24 +42,6 @@ jobs:
         run: npm install -g neonctl
       
       # Este paso es importante cuando usas un nombre fijo para la rama de prueba.
-      # Intenta borrar la rama de una ejecución anterior, por si falló y no se limpió.
-      - name: Delete Old Test Branch (if it exists)
-        continue-on-error: true # No falles si la rama no existe
-        run: |
-          neonctl branches delete "${{ env.NEON_TEST_BRANCH }}" --project-id "${{ secrets.NEON_PROJECT_ID }}"
-        env:
-          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
-
-      # Crea la rama de prueba usando los nombres que definiste
-      - name: Create Neon Test Branch
-        run: |
-          neonctl branches create \
-            --name "${{ env.NEON_TEST_BRANCH }}" \
-            --parent "${{ env.NEON_PROD_BRANCH }}" \
-            --project-id "${{ secrets.NEON_PROJECT_ID }}"
-        env:
-          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
-
       # Obtiene la URL de la base de datos para la rama de prueba
       - name: Get Connection String for Test Branch
         run: |
@@ -69,24 +57,21 @@ jobs:
         run: echo "DJANGO_SECRET_KEY=$(openssl rand -base64 32)" >> $GITHUB_ENV
 
       - name: Install Python Dependencies
-        run: python -m pip install -r saas/requirements.txt
-
-      - name: Django Migrate
-        working-directory: ./saas/src
-        run: python manage.py migrate --noinput
-
-      - name: Run Django Tests
-        env:
-          DATABASE_URL: ${{ env.DATABASE_URL }}
-          DJANGO_SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
-        working-directory: ./saas/src
-        run: python manage.py test --keepdb
-
-      # Limpia y borra la base de datos temporal al final
-      - name: Clean Up Test Branch on Neon
-        if: always() # Se ejecuta siempre, incluso si los tests fallan
         run: |
-          neonctl branches delete "${{ env.NEON_TEST_BRANCH }}" \
-            --project-id "${{ secrets.NEON_PROJECT_ID }}"
-        env:
-          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+            python -m pip install pip --upgrade
+            python -m pip install -r saas/requirements.txt
+
+        # Syncroniza los usuarios de Django con Stripe (Subscripciones)
+      - name: Django users Sync Stripe Subscriptions
+        working-directory: ./saas/src
+        if: github.event.schedule != '0 1,12 * * *'
+        
+        run: |
+          python manage.py sync_user_subs --day-start 0 --day-end 1
+
+        #Ejecuta el comando para limpiar suscripciones de Stripe que estan malas
+      - name: Django users Clear Dangling Stripe Subscriptions
+        working-directory: ./saas/src
+        if: github.event.schedule == '0 4 1 * *'
+        run: |
+            python manage.py clear_dangling_stripe_subs --day-start 0 --day-end 0 
