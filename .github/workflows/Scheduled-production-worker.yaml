@@ -1,47 +1,25 @@
-# Nombre del flujo de trabajo
-name: Django Scheduled Tasks and CI
+name: Django CI/CD Pipeline
 
-# --- SECCIÓN 'ON' CORREGIDA ---
 on:
-  # 1. Permite ejecutar el workflow manualmente
   workflow_dispatch:
-
-  # 2. Se ejecuta cuando haces push a la rama 'main'
   push:
     branches:
       - main
 
-  # 3. Se ejecuta cuando se abre un Pull Request hacia 'main'
-  pull_request:
-    branches:
-      - main
-
-  # 4. Tareas programadas (CORREGIDO de 'scheduler' a 'schedule')
-  schedule:
-    # Ejecuta el workflow a las 01:00 y 12:00 UTC todos los días
-    - cron: '0 1,12 * * *'
-    # Ejecuta el workflow a las 04:00 UTC el primer día de cada mes
-    - cron: '0 4 1 * *'
-
-# --- FIN DE LA CORRECCIÓN ---
-
-
 jobs:
-  build-and-test:
+  Scheduled-production-worker:
     runs-on: ubuntu-latest
 
-    # Tus variables de entorno, tal como las definiste
     env:
-      DJANGO_DEBUG: 'False' # En producción o CI, esto siempre debe ser False
-      STRIPE_TEST_OVERRIDE: 'True' 
+      DJANGO_DEBUG: 'False'
       NEON_TEST_BRANCH: 'Secuvast-Test-Delete'
       NEON_PROD_BRANCH: 'Secuvast-Prod'
-      # NOTA: Los siguientes secrets DEBEN estar configurados en GitHub
-      # Settings > Secrets and variables > Actions > Repository secrets
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      # Secrets from GitHub Settings
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
+      # This DATABASE_URL is just a default, it will be overwritten
+      DATABASE_URL: ${{ secrets.DATABASE_URL }} 
 
     steps:
       - name: Checkout repository code
@@ -60,7 +38,17 @@ jobs:
       - name: Install Neon CLI
         run: npm install -g neonctl
       
-      # No he modificado este bloque, es tu lógica para obtener la URL de la BD
+      # ======================= PASO DE DIAGNÓSTICO =======================
+      # Este nuevo paso le pregunta a Neon: "¿Qué ramas puedes ver?"
+      - name: List Available Neon Branches (DEBUG)
+        run: |
+          echo "Checking for branches in project ${{ secrets.NEON_PROJECT_ID }}"
+          neonctl branches list --project-id "${{ secrets.NEON_PROJECT_ID }}"
+        env:
+          # Le pasamos la API Key para que pueda autenticarse
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      # ===================================================================
+
       - name: Get Connection String for Test Branch
         run: |
           DB_URL=$(neonctl connection-string \
@@ -69,7 +57,6 @@ jobs:
             --project-id "${{ secrets.NEON_PROJECT_ID }}")
           echo "DATABASE_URL=$DB_URL" >> $GITHUB_ENV
         env:
-          # Pasamos la API Key de Neon específicamente a este paso
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
 
       - name: Setup Django Secret Key
@@ -79,7 +66,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r saas/requirements.txt
-
+      
       # Tu paso para sincronizar suscripciones
       - name: Django users Sync Stripe Subscriptions
         if: github.event_name == 'schedule' && github.event.schedule == '0 1,12 * * *'
@@ -91,5 +78,4 @@ jobs:
         if: github.event_name == 'schedule' && github.event.schedule == '0 4 1 * *'
         working-directory: ./saas/src
         run: |
-          # NOTA: Asegúrate que tu comando se llame así. En un ejemplo anterior era 'clear_dangling'
           python manage.py clear_dangling_stripe_subs --day-start 0 --day-end 0
