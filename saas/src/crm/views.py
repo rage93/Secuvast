@@ -50,3 +50,26 @@ def factura_detail_view(request, pk: int):
         "crm/factura_detail.html",
         {"factura": factura, "formset": formset},
     )
+
+
+@login_required
+def factura_create_view(request):
+    """Create a new invoice with optional line items."""
+    factura = Factura(usuario=request.user)
+    if request.method == "POST":
+        form = FacturaForm(request.POST, instance=factura, user=request.user)
+        formset = ItemFacturaFormSet(request.POST, instance=factura)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            messages.success(request, "Factura creada correctamente.")
+            return redirect("factura_detail", pk=factura.pk)
+    else:
+        form = FacturaForm(instance=factura, user=request.user)
+        formset = ItemFacturaFormSet(instance=factura)
+
+    return render(
+        request,
+        "crm/factura_form.html",
+        {"form": form, "formset": formset},
+    )

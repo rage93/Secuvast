@@ -3,34 +3,56 @@
 {% block head_title %}Factura {{ factura.id }} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">Factura {{ factura.id }}</h1>
-<p class="mb-2"><strong>Cliente:</strong> {{ factura.cliente.nombre }}</p>
-<p class="mb-2"><strong>Fecha:</strong> {{ factura.fecha|date:"Y-m-d" }}</p>
-<p class="mb-4"><strong>Total:</strong> {{ factura.total_calculado }}</p>
-
-<form method="post">
-  {% csrf_token %}
-  {{ formset.management_form }}
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead>
-      <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Eliminar</th>
-      </tr>
-    </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
-      {% for form in formset %}
-      <tr>
-        <td class="px-6 py-4 whitespace-nowrap">{{ form.producto }}</td>
-        <td class="px-6 py-4 whitespace-nowrap">{{ form.cantidad }}</td>
-        <td class="px-6 py-4 whitespace-nowrap">{{ form.precio_unitario }}</td>
-        <td class="px-6 py-4 whitespace-nowrap">{{ form.DELETE }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <button type="submit" class="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">Guardar</button>
-</form>
+<div class="grid grid-cols-12 gap-4 border-b border-gray-200 bg-white pb-4 dark:border-gray-700 dark:bg-gray-800">
+  <div class="col-span-full mx-4 mt-4">
+    <nav class="mb-4 flex" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+        <li class="inline-flex items-center">
+          <a href="/" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-700 dark:text-gray-400 dark:hover:text-white">
+            <svg class="me-2.5 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.3 3.3a1 1 0 0 1 1.4 0l6 6 2 2a1 1 0 0 1-1.4 1.4l-.3-.3V19a2 2 0 0 1-2 2h-3a1 1 0 0 1-1-1v-3h-2v3c0 .6-.4 1-1 1H7a2 2 0 0 1-2-2v-6.6l-.3.3a1 1 0 0 1-1.4-1.4l2-2 6-6Z" clip-rule="evenodd"/></svg>
+            Home
+          </a>
+        </li>
+        <li><div class="flex items-center"><svg class="mx-1 h-4 w-4 text-gray-400 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg><a href="{% url 'factura_list' %}" class="ms-1 text-sm font-medium text-gray-700 hover:text-primary-700 dark:text-gray-400 dark:hover:text-white md:ms-2">Invoices</a></div></li>
+        <li aria-current="page"><div class="flex items-center"><svg class="mx-1 h-4 w-4 text-gray-400 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg><span class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400 md:ms-2">Invoice #{{ factura.id }}</span></div></li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<div class="grid grid-cols-12 gap-4 p-4">
+  <div class="col-span-12 2xl:col-span-9">
+    <div class="space-y-4 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800 sm:space-y-8 md:p-6">
+      <h1 class="text-xl font-bold text-gray-900 dark:text-white">Invoice #{{ factura.id }}</h1>
+      <p class="text-gray-500 dark:text-gray-400">Cliente: {{ factura.cliente.nombre }}</p>
+      <p class="text-gray-500 dark:text-gray-400">Fecha: {{ factura.fecha|date:"Y-m-d" }}</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <div class="relative overflow-x-auto">
+          <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th class="px-6 py-3">Producto</th>
+                <th class="px-6 py-3">Cantidad</th>
+                <th class="px-6 py-3">Precio</th>
+                <th class="px-6 py-3">Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for form in formset %}
+              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td class="px-6 py-4">{{ form.producto }}</td>
+                <td class="px-6 py-4">{{ form.cantidad }}</td>
+                <td class="px-6 py-4">{{ form.precio_unitario }}</td>
+                <td class="px-6 py-4">{{ form.DELETE }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <button type="submit" class="mt-4 rounded-lg bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800">Guardar</button>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
