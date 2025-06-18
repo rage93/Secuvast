@@ -23,6 +23,7 @@ from .views import index, pw_protected_view, user_only_view, staff_only_view
 from checkouts import views as checkout_views
 from landing.views import landing_page_view
 from dashboard.views import dashboard_view
+from crm.views import factura_detail_view, factura_list_view
 
 urlpatterns = [
     path("checkout/sub-price/<int:price_id>/", 
@@ -46,6 +47,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #path('login/', auth_views.login_view),
     path('dashboard/', dashboard_view, name='dashboard'),
+    path('dashboard/facturas/', factura_list_view, name='factura_list'),
+    path('dashboard/facturas/<int:pk>/', factura_detail_view, name='factura_detail'),
     path('pricing/', subscriptions_views.subscription_price_view, name='pricing'),
     path('accounts/billing/', subscriptions_views.user_subscription_view, name='user_subscription'),
     path('accounts/billing/cancel', subscriptions_views.user_subscription_cancel_view, name='user_subscription_cancel'),
