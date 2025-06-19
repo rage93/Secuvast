@@ -10,6 +10,7 @@ class ClienteForm(forms.ModelForm):
         model = Cliente
         fields = ["nombre", "email", "telefono", "empresa", "notas"]
 
+
 class FacturaForm(forms.ModelForm):
     class Meta:
         model = Factura

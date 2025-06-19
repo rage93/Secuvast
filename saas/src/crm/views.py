@@ -5,9 +5,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Factura, Cliente
 from .forms import FacturaForm, ItemFacturaFormSet, ClienteForm
-from .models import Factura
-from .forms import FacturaForm, ItemFacturaFormSet
-
 
 
 @login_required

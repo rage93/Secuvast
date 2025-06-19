@@ -5,8 +5,23 @@ from django.utils import timezone
 User = settings.AUTH_USER_MODEL
 
 
+
+class UserOwnedModel(models.Model):
+    """Abstract base model to associate records with a user."""
+
+    usuario = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="%(class)ss"
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Cliente(UserOwnedModel):
+
 class Cliente(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+
     nombre = models.CharField(max_length=255)
     email = models.EmailField(blank=True, null=True)
     telefono = models.CharField(max_length=50, blank=True)
@@ -17,7 +32,8 @@ class Cliente(models.Model):
         return self.nombre
 
 
-class Producto(models.Model):
+
+class Producto(UserOwnedModel):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=255)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
@@ -28,8 +44,10 @@ class Producto(models.Model):
         return self.nombre
 
 
+
 class Proveedor(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+
     nombre = models.CharField(max_length=255)
     email = models.EmailField(blank=True, null=True)
     productos = models.ManyToManyField(Producto, blank=True)
@@ -38,8 +56,10 @@ class Proveedor(models.Model):
         return self.nombre
 
 
+
 class Factura(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     fecha = models.DateTimeField(default=timezone.now)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -80,10 +100,12 @@ class ItemFactura(models.Model):
         factura.update_total()
 
 
-class InventarioMovimiento(models.Model):
+
+class InventarioMovimiento(UserOwnedModel):
     class TipoMovimiento(models.TextChoices):
         ENTRADA = "entrada", "Entrada"
         SALIDA = "salida", "Salida"
+
 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
