@@ -58,10 +58,17 @@
     if (!target) return;
     var arrow = btn.querySelector('svg:last-of-type');
 
+    // set initial state
+    var isHidden = target.classList.contains('hidden');
+    if (arrow) {
+      arrow.classList.add('transition-transform');
+      arrow.classList.toggle('rotate-180', !isHidden);
+    }
+    btn.setAttribute('aria-expanded', !isHidden);
+
     btn.addEventListener('click', function () {
-      var isHidden = target.classList.toggle('hidden');
+      isHidden = target.classList.toggle('hidden');
       if (arrow) {
-        arrow.classList.add('transition-transform');
         arrow.classList.toggle('rotate-180', !isHidden);
       }
       btn.setAttribute('aria-expanded', !isHidden);
