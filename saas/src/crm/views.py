@@ -2,8 +2,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 
+
+from .models import Factura, Cliente
+from .forms import FacturaForm, ItemFacturaFormSet, ClienteForm
 from .models import Factura
 from .forms import FacturaForm, ItemFacturaFormSet
+
 
 
 @login_required
@@ -73,3 +77,26 @@ def factura_create_view(request):
         "crm/factura_form.html",
         {"form": form, "formset": formset},
     )
+
+
+@login_required
+def cliente_list_view(request):
+    """List clients and allow creation."""
+    if request.method == "POST":
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            cliente = form.save(commit=False)
+            cliente.usuario = request.user
+            cliente.save()
+            messages.success(request, "Cliente creado correctamente.")
+            return redirect("cliente_list")
+    else:
+        form = ClienteForm()
+
+    clientes = Cliente.objects.filter(usuario=request.user).order_by("nombre")
+    return render(
+        request,
+        "crm/cliente_list.html",
+        {"clientes": clientes, "form": form},
+    )
+

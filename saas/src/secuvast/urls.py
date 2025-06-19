@@ -27,6 +27,7 @@ from crm.views import (
     factura_detail_view,
     factura_list_view,
     factura_create_view,
+    cliente_list_view,
 )
 
 urlpatterns = [
@@ -54,6 +55,7 @@ urlpatterns = [
     path('dashboard/facturas/', factura_list_view, name='factura_list'),
     path('dashboard/facturas/nueva/', factura_create_view, name='factura_create'),
     path('dashboard/facturas/<int:pk>/', factura_detail_view, name='factura_detail'),
+    path('dashboard/clientes/', cliente_list_view, name='cliente_list'),
     path('pricing/', subscriptions_views.subscription_price_view, name='pricing'),
     path('accounts/billing/', subscriptions_views.user_subscription_view, name='user_subscription'),
     path('accounts/billing/cancel', subscriptions_views.user_subscription_cancel_view, name='user_subscription_cancel'),

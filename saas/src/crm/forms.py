@@ -5,6 +5,11 @@ from django.forms import inlineformset_factory
 from .models import Factura, Cliente, ItemFactura
 
 
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ["nombre", "email", "telefono", "empresa", "notas"]
+
 class FacturaForm(forms.ModelForm):
     class Meta:
         model = Factura
