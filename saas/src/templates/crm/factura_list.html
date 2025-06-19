@@ -1,0 +1,61 @@
+{% extends 'dashboard/base.html' %}
+
+{% block head_title %}Facturas - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-12 gap-4 bg-white dark:bg-gray-900">
+  <div class="col-span-full mx-4 mt-4">
+    <h1 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">My Invoices</h1>
+    <div class="mb-4">
+      <button type="button" data-modal-target="createFacturaModal" data-modal-toggle="createFacturaModal" class="rounded-lg bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800">Nueva factura</button>
+    </div>
+    <div class="overflow-x-auto relative">
+      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+        <thead class="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-4 py-3 font-semibold">Invoice ID</th>
+            <th scope="col" class="px-4 py-3 font-semibold">Client</th>
+            <th scope="col" class="px-4 py-3 font-semibold">Date</th>
+            <th scope="col" class="px-4 py-3 font-semibold">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for factura in facturas %}
+          <tr class="border-b hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-gray-800">
+            <th scope="row" class="px-4 py-3 font-medium text-gray-900 dark:text-white"><a href="{% url 'factura_detail' factura.id %}" class="hover:underline">#{{ factura.id }}</a></th>
+            <td class="px-4 py-3">{{ factura.cliente.nombre }}</td>
+            <td class="px-4 py-3">{{ factura.fecha|date:"Y-m-d" }}</td>
+            <td class="px-4 py-3">{{ factura.total_calculado }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="px-4 py-3 text-center">No hay facturas.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div id="createFacturaModal" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
+  <div class="relative max-h-full w-full max-w-md p-4">
+    <form method="post" class="relative rounded-lg bg-white shadow dark:bg-gray-800">
+      <div class="flex items-center justify-between rounded-t border-b px-4 py-2 dark:border-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Nueva factura</h3>
+        <button type="button" class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="createFacturaModal">
+          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+      <div class="space-y-4 p-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+      </div>
+      <div class="flex items-center justify-end space-x-2 rounded-b border-t border-gray-200 px-4 py-3 dark:border-gray-700">
+        <button data-modal-hide="createFacturaModal" type="button" class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">Cancelar</button>
+        <button type="submit" class="rounded-lg bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
