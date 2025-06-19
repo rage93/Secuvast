@@ -9,6 +9,7 @@ from .models import (
 )
 
 
+
 class UserOwnedAdmin(admin.ModelAdmin):
     """Limit visibility of objects to the requesting user."""
 
@@ -24,12 +25,14 @@ class UserOwnedAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+
 class ItemFacturaInline(admin.TabularInline):
     model = ItemFactura
     extra = 0
 
 
 @admin.register(Factura)
+
 class FacturaAdmin(UserOwnedAdmin):
     inlines = [ItemFacturaInline]
     list_display = ("id", "cliente", "fecha", "total")
@@ -38,11 +41,13 @@ class FacturaAdmin(UserOwnedAdmin):
 
 
 @admin.register(Cliente)
+
 class ClienteAdmin(UserOwnedAdmin):
     list_display = ("nombre", "email", "telefono", "usuario")
 
 
 @admin.register(Producto)
+
 class ProductoAdmin(UserOwnedAdmin):
     list_display = ("nombre", "precio", "stock", "usuario")
 
@@ -55,3 +60,8 @@ class ProveedorAdmin(UserOwnedAdmin):
 @admin.register(InventarioMovimiento)
 class InventarioMovimientoAdmin(UserOwnedAdmin):
     list_display = ("producto", "tipo", "cantidad", "fecha", "usuario")
+
+
+admin.site.register(Proveedor)
+admin.site.register(InventarioMovimiento)
+

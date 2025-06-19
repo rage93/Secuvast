@@ -8,6 +8,7 @@
     <div class="antialiased bg-gray-50 dark:bg-gray-900">
         {% include 'dashboard/nav.html' %}
         {% include 'dashboard/sidebar.html' %}
+        <div id="drawer-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden z-30 lg:hidden"></div>
 
         <main class="p-4 md:ml-64 h-auto pt-20">
         {% include 'base/messages.html' with messages=messages %}

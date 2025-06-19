@@ -7,7 +7,11 @@
   <div class="col-span-full mx-4 mt-4">
     <h1 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">My Invoices</h1>
     <div class="mb-4">
+
       <button type="button" data-modal-target="createFacturaModal" data-modal-toggle="createFacturaModal" class="rounded-lg bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800">Nueva factura</button>
+
+      <a href="{% url 'factura_create' %}" class="rounded-lg bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800">Crear factura</a>
+
     </div>
     <div class="overflow-x-auto relative">
       <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
@@ -35,6 +39,7 @@
     </div>
   </div>
 </div>
+
 <div id="createFacturaModal" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
   <div class="relative max-h-full w-full max-w-md p-4">
     <form method="post" class="relative rounded-lg bg-white shadow dark:bg-gray-800">
@@ -58,4 +63,5 @@
     </form>
   </div>
 </div>
+
 {% endblock %}

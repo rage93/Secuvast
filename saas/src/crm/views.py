@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 
+
 from .models import Factura, Cliente
 from .forms import FacturaForm, ItemFacturaFormSet, ClienteForm
 
@@ -95,3 +96,4 @@ def cliente_list_view(request):
         "crm/cliente_list.html",
         {"clientes": clientes, "form": form},
     )
+
