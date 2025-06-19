@@ -1,0 +1,38 @@
+{% extends 'dashboard/base.html' %}
+
+{% block head_title %}Facturas - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-12 gap-4 bg-white dark:bg-gray-900">
+  <div class="col-span-full mx-4 mt-4">
+    <h1 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">My Invoices</h1>
+    <div class="mb-4">
+      <a href="{% url 'factura_create' %}" class="rounded-lg bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800">Crear factura</a>
+    </div>
+    <div class="overflow-x-auto relative">
+      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+        <thead class="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-4 py-3 font-semibold">Invoice ID</th>
+            <th scope="col" class="px-4 py-3 font-semibold">Client</th>
+            <th scope="col" class="px-4 py-3 font-semibold">Date</th>
+            <th scope="col" class="px-4 py-3 font-semibold">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for factura in facturas %}
+          <tr class="border-b hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-gray-800">
+            <th scope="row" class="px-4 py-3 font-medium text-gray-900 dark:text-white"><a href="{% url 'factura_detail' factura.id %}" class="hover:underline">#{{ factura.id }}</a></th>
+            <td class="px-4 py-3">{{ factura.cliente.nombre }}</td>
+            <td class="px-4 py-3">{{ factura.fecha|date:"Y-m-d" }}</td>
+            <td class="px-4 py-3">{{ factura.total_calculado }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="px-4 py-3 text-center">No hay facturas.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

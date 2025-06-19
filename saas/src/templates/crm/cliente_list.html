@@ -1,0 +1,33 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-full p-4">
+    <h1 class="text-xl font-semibold mb-4">Clientes</h1>
+    <form method="post" class="mb-4">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Agregar</button>
+    </form>
+    <table class="min-w-full text-sm text-left">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2">Nombre</th>
+          <th class="px-4 py-2">Email</th>
+          <th class="px-4 py-2">Teléfono</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in clientes %}
+        <tr class="border-b">
+          <td class="px-4 py-2">{{ c.nombre }}</td>
+          <td class="px-4 py-2">{{ c.email }}</td>
+          <td class="px-4 py-2">{{ c.telefono }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="p-4 text-center">No hay clientes.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
