@@ -76,6 +76,11 @@
       isHidden = target.classList.toggle('hidden');
       if (arrow) {
 
+
+    btn.addEventListener('click', function () {
+      isHidden = target.classList.toggle('hidden');
+      if (arrow) {
+
         arrow.classList.add('transition-transform');
 
 
