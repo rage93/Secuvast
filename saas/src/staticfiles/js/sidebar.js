@@ -66,9 +66,24 @@
     }
     btn.setAttribute('aria-expanded', !isHidden);
 
+
     btn.addEventListener('click', function () {
       isHidden = target.classList.toggle('hidden');
       if (arrow) {
+
+
+    btn.addEventListener('click', function () {
+      isHidden = target.classList.toggle('hidden');
+      if (arrow) {
+
+
+    btn.addEventListener('click', function () {
+      isHidden = target.classList.toggle('hidden');
+      if (arrow) {
+
+        arrow.classList.add('transition-transform');
+
+
         arrow.classList.toggle('rotate-180', !isHidden);
       }
       btn.setAttribute('aria-expanded', !isHidden);
