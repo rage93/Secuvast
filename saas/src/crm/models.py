@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from decimal import Decimal
 
 User = settings.AUTH_USER_MODEL
 
@@ -19,9 +20,6 @@ class UserOwnedModel(models.Model):
 
 class Cliente(UserOwnedModel):
 
-class Cliente(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-
     nombre = models.CharField(max_length=255)
     email = models.EmailField(blank=True, null=True)
     telefono = models.CharField(max_length=50, blank=True)
@@ -34,7 +32,6 @@ class Cliente(models.Model):
 
 
 class Producto(UserOwnedModel):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=255)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField(default=0)
@@ -45,8 +42,7 @@ class Producto(UserOwnedModel):
 
 
 
-class Proveedor(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+class Proveedor(UserOwnedModel):
 
     nombre = models.CharField(max_length=255)
     email = models.EmailField(blank=True, null=True)
@@ -57,8 +53,7 @@ class Proveedor(models.Model):
 
 
 
-class Factura(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+class Factura(UserOwnedModel):
 
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     fecha = models.DateTimeField(default=timezone.now)
@@ -71,8 +66,11 @@ class Factura(models.Model):
         return f"Factura {self.id} - {self.cliente.nombre}"
 
     @property
-    def total_calculado(self) -> float:
-        return sum(item.cantidad * item.precio_unitario for item in self.items.all())
+    def total_calculado(self) -> Decimal:
+        return sum(
+            (item.cantidad * item.precio_unitario for item in self.items.all()),
+            Decimal("0"),
+        )
 
     def update_total(self) -> None:
         """Recalculate and store the invoice total based on its items."""
@@ -107,7 +105,6 @@ class InventarioMovimiento(UserOwnedModel):
         SALIDA = "salida", "Salida"
 
 
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     tipo = models.CharField(max_length=10, choices=TipoMovimiento.choices)
     cantidad = models.IntegerField()
