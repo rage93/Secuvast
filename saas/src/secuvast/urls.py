@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import home_view, about_view
 from auth import views as auth_views
 from subscriptions import views as subscriptions_views
@@ -66,3 +68,8 @@ urlpatterns = [
     path('protected/user-only/', user_only_view),
     path('profiles/', include('profiles.urls')),
     ]
+
+urlpatterns += static(
+    settings.STATIC_URL,               # → '/static/'
+    document_root=settings.STATICFILES_BASE_DIR
+)

@@ -62,6 +62,3 @@ class InventarioMovimientoAdmin(UserOwnedAdmin):
     list_display = ("producto", "tipo", "cantidad", "fecha", "usuario")
 
 
-admin.site.register(Proveedor)
-admin.site.register(InventarioMovimiento)
-

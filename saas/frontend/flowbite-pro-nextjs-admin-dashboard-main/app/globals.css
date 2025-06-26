@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+@plugin 'flowbite-react/plugin/tailwindcss';
+
+@source '../.flowbite-react/class-list.json';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    @apply border-gray-200;
+  }
+}
+
+/* chart styles */
+.apexcharts-tooltip {
+  @apply rounded-lg! border-0! bg-white! text-gray-500! shadow-lg! dark:bg-gray-700! dark:text-gray-400!;
+}
+
+.apexcharts-tooltip .apexcharts-tooltip-title {
+  @apply border-b! border-gray-200! bg-gray-100! px-4! py-2! dark:border-gray-500! dark:bg-gray-600!;
+}
+
+.apexcharts-xaxistooltip {
+  @apply rounded-lg! border-0! bg-white! text-gray-500! shadow-lg! dark:bg-gray-700! dark:text-gray-300!;
+}
+
+.apexcharts-tooltip .apexcharts-tooltip-text-y-value {
+  @apply dark:text-white;
+}
+
+.apexcharts-xaxistooltip-text {
+  @apply text-sm! font-medium!;
+}
+
+.apexcharts-xaxistooltip:before,
+.apexcharts-xaxistooltip:after {
+  @apply border-0!;
+}
+
+/* SVG map styles */
+.svgMap-map-wrapper {
+  @apply bg-white!;
+}
+
+.svgMap-map-image {
+  @apply dark:bg-gray-800;
+}
+
+.svgMap-map-controls-wrapper {
+  @apply bottom-0! left-0! shadow-none! dark:bg-gray-800!;
+}
+
+.svgMap-map-controls-zoom {
+  @apply dark:bg-gray-800!;
+}
+
+.svgMap-map-wrapper .svgMap-control-button {
+  @apply rounded-lg! border! border-solid! border-gray-300! hover:bg-gray-100! dark:border-gray-600! dark:hover:bg-gray-600!;
+}
+
+.svgMap-map-wrapper .svgMap-control-button.svgMap-zoom-button:after,
+.svgMap-map-wrapper .svgMap-control-button.svgMap-zoom-button:before {
+  @apply dark:bg-gray-600 dark:hover:bg-gray-500;
+}
+
+.svgMap-map-wrapper .svgMap-control-button:first-child {
+  @apply mr-2!;
+}
+
+.svgMap-tooltip {
+  @apply rounded-lg! border-0! bg-white! text-left! shadow-lg! dark:bg-gray-700!;
+}
+
+.svgMap-tooltip
+  .svgMap-tooltip-content-container
+  .svgMap-tooltip-flag-container {
+  @apply mr-2! inline-block! border-0! p-0! text-left!;
+}
+
+.svgMap-tooltip
+  .svgMap-tooltip-content-container
+  .svgMap-tooltip-flag-container
+  .svgMap-tooltip-flag {
+  @apply inline-block! h-4! border-0! p-0!;
+}
+
+.svgMap-tooltip .svgMap-tooltip-title {
+  @apply inline-block! pt-2! text-sm! font-semibold! text-gray-900! dark:text-white!;
+}
+
+.svgMap-tooltip .svgMap-tooltip-content {
+  @apply mt-0!;
+}
+
+.svgMap-tooltip .svgMap-tooltip-content table td {
+  @apply text-left! text-sm! font-normal! text-gray-500! dark:text-gray-400!;
+}
+
+.svgMap-tooltip .svgMap-tooltip-content table td span {
+  @apply text-left! text-sm! font-semibold! text-gray-900! dark:text-white!;
+}
+
+.svgMap-tooltip .svgMap-tooltip-pointer {
+  @apply hidden!;
+}
+
+.svgMap-map-wrapper .svgMap-country {
+  @apply dark:stroke-gray-800;
+}
+
+.svgMap-map-wrapper .svgMap-country {
+  @apply dark:stroke-gray-800!;
+}
+
+.svgMap-country[fill="#4B5563"] {
+  @apply fill-[#4B5563]!;
+}
+
+/* kanban styles */
+
+.drag-card {
+  @apply opacity-100!;
+  @apply rotate-6;
+}
+
+.ghost-card {
+  @apply bg-gray-100/40! dark:bg-gray-600/40!;
+}
