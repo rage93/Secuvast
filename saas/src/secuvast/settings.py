@@ -53,8 +53,11 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 DEBUG = config("DJANGO_DEBUG")
 print("DEBUG", DEBUG)
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "secuvast.com"]
-
+ALLOWED_HOSTS = [
+    "159.203.53.170",
+    "167.99.180.202",
+    "localhost", "127.0.0.1",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -81,13 +84,23 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "slippers",
     'compressor',
+    # Django Rest Framework
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
+    "drf_spectacular",
     
 ]
 
-
+CORS_ALLOWED_ORIGINS = [
+    "http://159.203.53.170:3000",
+    "http://167.99.180.202:3000",
+]
+CORS_ALLOW_CREDENTIALS = True 
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "helpers.middleware.schemas.SchemaTenantMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -100,6 +113,13 @@ MIDDLEWARE = [
     #"django_hosts.middleware.HostsResponseMiddleware",
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
 ROOT_URLCONF = 'secuvast.urls'
 
 TEMPLATES = [

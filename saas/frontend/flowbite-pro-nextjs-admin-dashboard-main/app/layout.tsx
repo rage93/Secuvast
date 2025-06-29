@@ -1,11 +1,14 @@
-import { ThemeModeScript, ThemeProvider } from "flowbite-react";
+import { ThemeModeScript } from "flowbite-react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import type { PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
-import { applyTheme, customTheme } from "./theme";
+import RequireAuth           from "@/components/RequireAuth"; 
+// La ruta correcta es ../ para salir del directorio 'app'
+import { Providers } from "../components/providers"; 
 
 import "./globals.css";
+
+export const metadata: Metadata = { title: "SecuVast" };
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,29 +16,15 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "Next.js Tailwind CSS Dashboard - Flowbite",
-  description:
-    "Get started with a premium admin dashboard layout built with React, Tailwind CSS and Flowbite featuring 21 example pages including charts, kanban board, mailing system, and more.",
-};
-
-export default function RootLayout({ children }: PropsWithChildren) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <head>
-        {/* for charts only */}
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-          type="text/css"
-        />
-        <ThemeModeScript />
+        <ThemeModeScript mode="auto" />
       </head>
       <body className={twMerge("bg-gray-50 dark:bg-gray-900", inter.className)}>
-        <ThemeProvider theme={customTheme} applyTheme={applyTheme}>
-          {children}
-        </ThemeProvider>
+        {/* 2. Usa el componente Providers para envolver a los children */}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

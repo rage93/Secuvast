@@ -1,75 +1,105 @@
-"""
-URL configuration for secuvast project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+# secuvast/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home_view, about_view
+
+# ─── APP / PROJECT VIEWS ────────────────────────────────────────────────────
+from .views import (
+    home_view, about_view, index,
+    pw_protected_view, user_only_view, staff_only_view
+)
 from auth import views as auth_views
 from subscriptions import views as subscriptions_views
-from .views import index, pw_protected_view, user_only_view, staff_only_view
 from checkouts import views as checkout_views
 from landing.views import landing_page_view
 from dashboard.views import dashboard_view
 from crm.views import (
-    factura_detail_view,
-    factura_list_view,
-    factura_create_view,
-    cliente_list_view,
+    factura_detail_view, factura_list_view,
+    factura_create_view, cliente_list_view,
 )
 from profiles.views import profile_list_view
 
-urlpatterns = [
-    path("checkout/sub-price/<int:price_id>/", 
-            checkout_views.product_price_redirect_view,
-            name='sub-price-checkout'
-            ),
-    path("checkout/start/", 
-            checkout_views.checkout_redirect_view,
-            name='stripe-checkout-start'
-            ),
-    path("checkout/success/", 
-            checkout_views.checkout_finalize_view,
-            name='stripe-checkout-end'
-            ),
-    path("", landing_page_view, name="home"),  #index> home
-    path('hello-world/', home_view),
-    #path("register/", auth_views.register_view),
-    path('about/', about_view),
-    path("pricing/<str:interval>/", subscriptions_views.subscription_price_view, name='pricing_interval'),
-    path('accounts/', include('allauth.urls')),
-    path('admin/', admin.site.urls),
-    #path('login/', auth_views.login_view),
-    path('dashboard/', dashboard_view, name='dashboard'),
-    path('dashboard/facturas/', factura_list_view, name='factura_list'),
-    path('dashboard/facturas/nueva/', factura_create_view, name='factura_create'),
-    path('dashboard/facturas/<int:pk>/', factura_detail_view, name='factura_detail'),
-    path('dashboard/clientes/', cliente_list_view, name='cliente_list'),
-    path('dashboard/usuarios/', profile_list_view, name='user_list'),
-    path('pricing/', subscriptions_views.subscription_price_view, name='pricing'),
-    path('accounts/billing/', subscriptions_views.user_subscription_view, name='user_subscription'),
-    path('accounts/billing/cancel', subscriptions_views.user_subscription_cancel_view, name='user_subscription_cancel'),
-    path('protected/', pw_protected_view),
-    path('protected/staff-only/', staff_only_view),
-    path('protected/user-only/', user_only_view),
-    path('profiles/', include('profiles.urls')),
-    ]
+# ─── DRF / JWT / SPECTACULAR ────────────────────────────────────────────────
+from rest_framework import routers
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView, TokenRefreshView,
+)
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from customers.api import CustomerViewSet
+from secuvast.api.views import SessionTokenView
 
+router = routers.DefaultRouter()
+router.register(r"customers", CustomerViewSet, basename="customer")
+
+# ◉  Bloque exclusivo del API (prefijo /api/v1/)
+api_patterns = [
+    path("", include(router.urls)),                           # /api/v1/
+    path("auth/token/",   TokenObtainPairView.as_view(), name="token_obtain"),
+    path("auth/refresh/", TokenRefreshView.as_view(),  name="token_refresh"),
+    path("schema/", SpectacularAPIView.as_view(),      name="schema"),
+    path("docs/",   SpectacularSwaggerView.as_view(url_name="schema"),
+         name="swagger-ui"),
+]
+
+# ─── URLS GLOBALES ──────────────────────────────────────────────────────────
+urlpatterns = [
+
+    # API REST v1
+    path("api/v1/auth/session/", SessionTokenView.as_view(), name="session_jwt"),
+    path("api/v1/", include(api_patterns)),
+
+    # Checkout / Stripe
+    path("checkout/sub-price/<int:price_id>/",
+         checkout_views.product_price_redirect_view,
+         name="sub-price-checkout"),
+    path("checkout/start/",  checkout_views.checkout_redirect_view,
+         name="stripe-checkout-start"),
+    path("checkout/success/", checkout_views.checkout_finalize_view,
+         name="stripe-checkout-end"),
+
+    # Core / marketing pages
+    path("", landing_page_view, name="home"),
+    path("hello-world/", home_view),
+    path("about/", about_view),
+    path("pricing/<str:interval>/",
+         subscriptions_views.subscription_price_view,
+         name="pricing_interval"),
+    path("pricing/", subscriptions_views.subscription_price_view,
+         name="pricing"),
+
+    # Auth & accounts
+    path("accounts/", include("allauth.urls")),
+    path("accounts/billing/", subscriptions_views.user_subscription_view,
+         name="user_subscription"),
+    path("accounts/billing/cancel",
+         subscriptions_views.user_subscription_cancel_view,
+         name="user_subscription_cancel"),
+
+    # Admin
+    path("admin/", admin.site.urls),
+
+    # Dashboard
+    path("dashboard/", dashboard_view, name="dashboard"),
+    path("dashboard/facturas/", factura_list_view,   name="factura_list"),
+    path("dashboard/facturas/nueva/", factura_create_view,
+         name="factura_create"),
+    path("dashboard/facturas/<int:pk>/", factura_detail_view,
+         name="factura_detail"),
+    path("dashboard/clientes/",  cliente_list_view,  name="cliente_list"),
+    path("dashboard/usuarios/",  profile_list_view,  name="user_list"),
+
+    # Protected examples
+    path("protected/",               pw_protected_view),
+    path("protected/staff-only/",    staff_only_view),
+    path("protected/user-only/",     user_only_view),
+
+    # Profiles app
+    path("profiles/", include("profiles.urls")),
+]
+
+# ─── STATIC (solo DEBUG) ───────────────────────────────────────────────────
 urlpatterns += static(
-    settings.STATIC_URL,               # → '/static/'
-    document_root=settings.STATICFILES_BASE_DIR
+    settings.STATIC_URL,
+    document_root=settings.STATICFILES_BASE_DIR,
 )
