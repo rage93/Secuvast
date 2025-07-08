@@ -13,6 +13,7 @@ import {
 } from "flowbite-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import type { ComponentProps, FC, HTMLAttributeAnchorTarget } from "react";
 import { useEffect, useState } from "react";
 import {
@@ -24,6 +25,7 @@ import {
   HiDocumentReport,
   HiInboxIn,
   HiLockClosed,
+  HiOfficeBuilding,
   HiSearch,
   HiShoppingBag,
   HiSupport,
@@ -60,6 +62,12 @@ export function DashboardSidebar() {
 
 function DesktopSidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const isAdmin =
+    session?.user?.role === "admin" ||
+    session?.user?.isSuperuser ||
+    session?.user?.isStaff;
+  const pages = getPages(Boolean(isAdmin));
   const { isCollapsed, setCollapsed } = useSidebarContext().desktop;
   const [isPreview, setIsPreview] = useState(isCollapsed);
 
@@ -116,6 +124,12 @@ function DesktopSidebar() {
 
 function MobileSidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const isAdmin =
+    session?.user?.role === "admin" ||
+    session?.user?.isSuperuser ||
+    session?.user?.isStaff;
+  const pages = getPages(Boolean(isAdmin));
   const { isOpen, close } = useSidebarContext().mobile;
 
   if (!isOpen) return null;
@@ -438,30 +452,44 @@ function LanguageDropdown() {
   );
 }
 
-const pages: SidebarItem[] = [
-  { href: "/", icon: HiChartPie, label: "Dashboard" },
-  { href: "/kanban", icon: HiViewGrid, label: "Kanban" },
-  { href: "/mailing/inbox", icon: HiInboxIn, label: "Inbox", badge: "3" },
-  {
-    icon: HiShoppingBag,
-    label: "E-commerce",
-    items: [
-      { href: "/e-commerce/products", label: "Products" },
-      { href: "/e-commerce/billing", label: "Billing" },
-      { href: "/e-commerce/invoice", label: "Invoice" },
-    ],
-  },
-  {
-    icon: HiUsers,
-    label: "Users",
-    items: [
-      { href: "/users/list", label: "Users list" },
-      { href: "/users/profile", label: "Profile" },
-      { href: "/users/feed", label: "Feed" },
-      { href: "/users/settings", label: "Settings" },
-    ],
-  },
-  {
+function getPages(isAdmin: boolean): SidebarItem[] {
+  const base: SidebarItem[] = [
+    { href: "/", icon: HiChartPie, label: "Dashboard" },
+    { href: "/kanban", icon: HiViewGrid, label: "Kanban" },
+    { href: "/mailing/inbox", icon: HiInboxIn, label: "Inbox", badge: "3" },
+    {
+      icon: HiShoppingBag,
+      label: "E-commerce",
+      items: [
+        { href: "/e-commerce/products", label: "Products" },
+        { href: "/e-commerce/billing", label: "Billing" },
+        { href: "/e-commerce/invoice", label: "Invoice" },
+      ],
+    },
+    {
+      icon: HiUsers,
+      label: "Users",
+      items: [
+        { href: "/users/list", label: "Users list" },
+        { href: "/users/profile", label: "Profile" },
+        { href: "/users/feed", label: "Feed" },
+        { href: "/users/settings", label: "Settings" },
+      ],
+    },
+  ];
+
+  if (isAdmin) {
+    base.push({
+      icon: HiOfficeBuilding,
+      label: "Company",
+      items: [
+        { href: "/company/info", label: "Info" },
+        { href: "/company/users", label: "Users" },
+      ],
+    });
+  }
+
+  base.push({
     icon: HiDocumentReport,
     label: "Pages",
     items: [
@@ -470,8 +498,9 @@ const pages: SidebarItem[] = [
       { href: "/pages/404", label: "404 not found" },
       { href: "/pages/500", label: "500 server error" },
     ],
-  },
-  {
+  });
+
+  base.push({
     icon: HiLockClosed,
     label: "Authentication",
     items: [
@@ -481,8 +510,10 @@ const pages: SidebarItem[] = [
       { href: "/authentication/reset-password", label: "Reset password" },
       { href: "/authentication/profile-lock", label: "Profile lock" },
     ],
-  },
-];
+  });
+
+  return base;
+}
 
 const externalPages: SidebarItem[] = [
   {

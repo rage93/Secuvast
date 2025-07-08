@@ -10,6 +10,9 @@ declare module "next-auth" {
     refreshToken: string;
     accessExp: number;
     username?: string;
+    isSuperuser?: boolean;
+    isStaff?: boolean;
+    role?: string;
   }
   interface Session {
     accessToken?: string;
@@ -19,11 +22,33 @@ declare module "next-auth" {
       email?: string | null;
       image?: string | null;
       username?: string;
+      isSuperuser?: boolean;
+      isStaff?: boolean;
+      role?: string;
     };
   }
 }
 
-interface AccessPayload { exp: number; user_id: number; email?: string; username?: string; }
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+    refreshToken?: string;
+    accessExp?: number;
+    isSuperuser?: boolean;
+    isStaff?: boolean;
+    role?: string;
+  }
+}
+
+interface AccessPayload {
+  exp: number;
+  user_id: number;
+  email?: string;
+  username?: string;
+  is_superuser?: boolean;
+  is_staff?: boolean;
+  role?: string;
+}
 
 /* --------------------------------------------------------------------------------- */
 /* Helper para refrescar tokens cuando el access está por expirar                    */
@@ -67,6 +92,9 @@ export const authOptions: NextAuthOptions = {
           accessToken:  access,
           refreshToken: refresh,
           accessExp:    payload.exp,
+          isSuperuser:  payload.is_superuser,
+          isStaff:      payload.is_staff,
+          role:         payload.role,
         };
       },
     }),
@@ -81,6 +109,9 @@ export const authOptions: NextAuthOptions = {
         token.accessToken  = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.accessExp    = user.accessExp;
+        token.isSuperuser  = user.isSuperuser;
+        token.isStaff      = user.isStaff;
+        token.role         = user.role;
       }
 
       /* --- Refresh automático si faltan <60 s --- */
@@ -105,7 +136,13 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token.accessToken) {
         session.accessToken = token.accessToken as string;
-        session.user = { ...session.user, id: token.sub };
+        session.user = {
+          ...session.user,
+          id: token.sub,
+          isSuperuser: token.isSuperuser as boolean | undefined,
+          isStaff: token.isStaff as boolean | undefined,
+          role: token.role as string | undefined,
+        };
       } else {
         /* token vacío → forzamos cierre de sesión */
         session = null as unknown as Session;
