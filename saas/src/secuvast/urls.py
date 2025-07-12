@@ -22,26 +22,32 @@ from profiles.views import profile_list_view
 
 # ─── DRF / JWT / SPECTACULAR ────────────────────────────────────────────────
 from rest_framework import routers
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView, TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
+#  ⬇️  ¡vuelve a importar!
+from secuvast.api.views import SessionTokenView          #  ←  AQUI
 from customers.api import CustomerViewSet
-from secuvast.api.views import SessionTokenView
-
+from crm.api import (
+    ProductoViewSet, ClienteViewSet,
+    ProveedorViewSet, FacturaViewSet,
+)
 router = routers.DefaultRouter()
-router.register(r"customers", CustomerViewSet, basename="customer")
+router.register(r"customers",  CustomerViewSet,         basename="customer")
+router.register(r"products",   ProductoViewSet,         basename="product")
+router.register(r"clients",    ClienteViewSet,          basename="client")
+router.register(r"providers",  ProveedorViewSet,        basename="provider")
+router.register(r"invoices",   FacturaViewSet,          basename="invoice")
 
-# ◉  Bloque exclusivo del API (prefijo /api/v1/)
+# ⚠️ AHORA construimos la lista:
 api_patterns = [
-    path("", include(router.urls)),                           # /api/v1/
-    path("auth/token/",   TokenObtainPairView.as_view(), name="token_obtain"),
-    path("auth/refresh/", TokenRefreshView.as_view(),  name="token_refresh"),
-    path("schema/", SpectacularAPIView.as_view(),      name="schema"),
+    path("", include(router.urls)),                       # /api/v1/…
+    path("auth/token/",   TokenObtainPairView.as_view(),  name="token_obtain"),
+    path("auth/refresh/", TokenRefreshView.as_view(),     name="token_refresh"),
+    path("schema/", SpectacularAPIView.as_view(),         name="schema"),
     path("docs/",   SpectacularSwaggerView.as_view(url_name="schema"),
          name="swagger-ui"),
 ]
-
 # ─── URLS GLOBALES ──────────────────────────────────────────────────────────
 urlpatterns = [
 
