@@ -10,8 +10,8 @@ User = get_user_model()
 
 
 from .forms import (
-    BasicInfoForm, VisibilityForm,
-    TwoFactorForm, PasswordChangeForm,
+    BasicInfoForm, ContactForm, PreferencesForm,
+    VisibilityForm, TwoFactorForm, PasswordChangeForm,
 )
 # ─────────────────────────────────────────────────────────────
 # PERFIL - PÁGINA PRINCIPAL (My Profile)
@@ -58,49 +58,40 @@ def profile_detail_view(request, username=None):
 @login_required
 def profile_edit_view(request):
     profile = request.user.profile
-    if request.method == "POST":
-        # ¿Desde qué formulario llegó?
-        if "basic_info_submit" in request.POST:
-            basic_form = BasicInfoForm(
-                request.POST, request.FILES,
-                instance=profile, user=request.user
-            )
-            if basic_form.is_valid():
-                basic_form.save()
-                messages.success(request, "Datos actualizados correctamente.")
-                return redirect(request.path)  # evita re-POST
-        elif "visibility_submit" in request.POST:
-            vis_form = VisibilityForm(request.POST, instance=profile)
-            if vis_form.is_valid():
-                vis_form.save()
-                messages.info(request, "Visibilidad actualizada.")
-                return redirect(request.path)
-        elif "2fa_submit" in request.POST:
-            two_form = TwoFactorForm(request.POST, instance=profile)
-            if two_form.is_valid():
-                two_form.save()
-                messages.info(request, "Preferencia 2FA guardada.")
-                return redirect(request.path)
-        elif "password_submit" in request.POST:
-            pwd_form = PasswordChangeForm(user=request.user, data=request.POST)
-            if pwd_form.is_valid():
-                pwd_form.save()
-                messages.success(request, "Contraseña cambiada.")
-                return redirect(request.path)
-    else:
-        basic_form = BasicInfoForm(instance=profile, user=request.user)
-        vis_form = VisibilityForm(instance=profile)
-        two_form = TwoFactorForm(instance=profile)
-        pwd_form = PasswordChangeForm(user=request.user)
+    forms_map = {
+        "basic": BasicInfoForm,
+        "contact": ContactForm,
+        "preferences": PreferencesForm,
+        "visibility": VisibilityForm,
+        "twofactor": TwoFactorForm,
+        "password": PasswordChangeForm,
+    }
 
-    context = {
-        "basic_form": basic_form,
-        "vis_form": vis_form,
-        "two_form": two_form,
-        "pwd_form": pwd_form,
-        # para no romper tu template actual:
+    section = request.POST.get("_section", request.GET.get("tab", "basic"))
+    form_cls = forms_map.get(section, BasicInfoForm)
+
+    def init_form(cls, **kwargs):
+        if cls is PasswordChangeForm:
+            return cls(user=request.user, **kwargs)
+        params = {"instance": profile}
+        if "user" in cls.__init__.__code__.co_varnames:
+            params["user"] = request.user
+        params.update(kwargs)
+        return cls(**params)
+
+    form = init_form(form_cls, data=request.POST or None, files=request.FILES or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Cambios guardados.")
+        return redirect(f"{request.path}?tab={section}")
+
+    context = {name + "_form": init_form(cls)
+               for name, cls in forms_map.items()}
+    context["active_tab"] = section
+    context.update({
         "profile": profile,
         "segment": "settings",
         "parent": "accounts",
-    }
+    })
     return render(request, "profiles/profile.html", context)

@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 
 User = get_user_model()
 
@@ -23,6 +24,7 @@ class Profile(models.Model):
     # ───── datos básicos ─────────────────────────────────────────────
     first_name   = models.CharField(max_length=30, blank=True)
     last_name    = models.CharField(max_length=30, blank=True)
+    slug         = models.SlugField(max_length=60, unique=True, blank=True)
     gender       = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
     birth_date   = models.DateField(blank=True, null=True)
     location     = models.CharField(max_length=120, blank=True)
@@ -35,6 +37,7 @@ class Profile(models.Model):
         validators=[phone_regex], max_length=17, blank=True
     )
 
+    secondary_email  = models.EmailField(blank=True)
     bio          = models.TextField(blank=True) #  ← nuevo: lo pide el template
     language     = models.CharField(max_length=40, blank=True)
     skills       = models.CharField(
@@ -43,6 +46,10 @@ class Profile(models.Model):
     )
 
     # ───── preferencias ─────────────────────────────────────────────
+    timezone            = models.CharField(max_length=50, blank=True)
+    dark_mode           = models.BooleanField(default=False)
+    newsletter_opt_in   = models.BooleanField(default=True)
+
     is_visible          = models.BooleanField(default=True)
     two_factor_enabled  = models.BooleanField(default=False)
 
@@ -60,3 +67,9 @@ class Profile(models.Model):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.user:
+            base = self.user.get_username()
+            self.slug = slugify(base)[:60]
+        super().save(*args, **kwargs)
