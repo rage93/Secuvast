@@ -24,7 +24,9 @@ class Profile(models.Model):
     # ───── datos básicos ─────────────────────────────────────────────
     first_name   = models.CharField(max_length=30, blank=True)
     last_name    = models.CharField(max_length=30, blank=True)
-    slug         = models.SlugField(max_length=60, unique=True, blank=True)
+
+    slug         = models.SlugField(max_length=60, unique=True, blank=True, null=True)
+
     gender       = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
     birth_date   = models.DateField(blank=True, null=True)
     location     = models.CharField(max_length=120, blank=True)
