@@ -24,6 +24,12 @@
           <li class="nav-item"><a class="nav-link text-dark" data-scroll href="#basic-info">
             <i class="material-symbols-rounded text-lg me-2">person</i>Basic Info
           </a></li>
+          <li class="nav-item pt-2"><a class="nav-link text-dark" data-scroll href="#contact">
+            <i class="material-symbols-rounded text-lg me-2">mail</i>Contact
+          </a></li>
+          <li class="nav-item pt-2"><a class="nav-link text-dark" data-scroll href="#preferences">
+            <i class="material-symbols-rounded text-lg me-2">settings</i>Preferences
+          </a></li>
           <li class="nav-item pt-2"><a class="nav-link text-dark" data-scroll href="#visibility">
             <i class="material-symbols-rounded text-lg me-2">visibility</i>Visibility
           </a></li>
@@ -46,6 +52,7 @@
 
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            <input type="hidden" name="_section" value="basic">
             {{ basic_form.non_field_errors }}
 
             <div class="row">
@@ -53,22 +60,45 @@
               <div class="col-md-6">{{ basic_form.last_name|as_crispy_field }}</div>
             </div>
             <div class="row">
+              <div class="col-md-6">{{ basic_form.slug|as_crispy_field }}</div>
+              <div class="col-md-6">{{ basic_form.location|as_crispy_field }}</div>
+            </div>
+            <div class="row">
               <div class="col-md-4">{{ basic_form.gender|as_crispy_field }}</div>
               <div class="col-md-4">{{ basic_form.birth_date|as_crispy_field }}</div>
               <div class="col-md-4">{{ basic_form.language|as_crispy_field }}</div>
             </div>
-            <div class="row">
-              <div class="col-md-6">{{ basic_form.location|as_crispy_field }}</div>
-              <div class="col-md-6">{{ basic_form.phone_number|as_crispy_field }}</div>
-            </div>
             <div class="mb-3">{{ basic_form.skills|as_crispy_field }}</div>
 
-            <button type="submit" name="basic_info_submit"
-                    class="btn bg-gradient-dark btn-sm float-end">
-              Save
-            </button>
+            <button type="submit" class="btn bg-gradient-dark btn-sm float-end">Save</button>
           </form>
 
+        </div>
+      </div>
+
+      {# -------------- CONTACT INFO ------------------------------------- #}
+      <div class="card mb-4" id="contact">
+        <div class="card-header"><h5 class="mb-0">Contact</h5></div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="_section" value="contact">
+            {{ contact_form|crispy }}
+            <button type="submit" class="btn bg-gradient-dark btn-sm float-end">Save</button>
+          </form>
+        </div>
+      </div>
+
+      {# -------------- PREFERENCES ------------------------------------- #}
+      <div class="card mb-4" id="preferences">
+        <div class="card-header"><h5 class="mb-0">Preferences</h5></div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="_section" value="preferences">
+            {{ preferences_form|crispy }}
+            <button type="submit" class="btn bg-gradient-dark btn-sm float-end">Save</button>
+          </form>
         </div>
       </div>
 
@@ -79,14 +109,14 @@
 
           <form method="post">
             {% csrf_token %}
+            <input type="hidden" name="_section" value="visibility">
             <div class="form-check form-switch">
-              {{ vis_form.is_visible }}
-              <label class="form-check-label ms-2" for="{{ vis_form.is_visible.id_for_label }}">
+              {{ visibility_form.is_visible }}
+              <label class="form-check-label ms-2" for="{{ visibility_form.is_visible.id_for_label }}">
                 Public profile
               </label>
             </div>
-            <button type="submit" name="visibility_submit"
-                    class="btn bg-gradient-dark btn-sm mt-3">Save</button>
+            <button type="submit" class="btn bg-gradient-dark btn-sm mt-3">Save</button>
           </form>
 
         </div>
@@ -99,12 +129,12 @@
 
           <form method="post">
             {% csrf_token %}
-            {{ pwd_form.non_field_errors }}
-            {{ pwd_form.old_password|as_crispy_field }}
-            {{ pwd_form.new_password1|as_crispy_field }}
-            {{ pwd_form.new_password2|as_crispy_field }}
-            <button type="submit" name="password_submit"
-                    class="btn bg-gradient-dark btn-sm mt-2">Update password</button>
+            <input type="hidden" name="_section" value="password">
+            {{ password_form.non_field_errors }}
+            {{ password_form.old_password|as_crispy_field }}
+            {{ password_form.new_password1|as_crispy_field }}
+            {{ password_form.new_password2|as_crispy_field }}
+            <button type="submit" class="btn bg-gradient-dark btn-sm mt-2">Update password</button>
           </form>
 
         </div>
@@ -117,14 +147,14 @@
 
           <form method="post">
             {% csrf_token %}
+            <input type="hidden" name="_section" value="twofactor">
             <div class="form-check form-switch">
-              {{ two_form.two_factor_enabled }}
-              <label class="form-check-label ms-2" for="{{ two_form.two_factor_enabled.id_for_label }}">
+              {{ twofactor_form.two_factor_enabled }}
+              <label class="form-check-label ms-2" for="{{ twofactor_form.two_factor_enabled.id_for_label }}">
                 Enable 2FA
               </label>
             </div>
-            <button type="submit" name="2fa_submit"
-                    class="btn bg-gradient-dark btn-sm mt-3">Save</button>
+            <button type="submit" class="btn bg-gradient-dark btn-sm mt-3">Save</button>
           </form>
 
         </div>
