@@ -27,13 +27,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="profile",
-            name="slug",
 
-            field=models.SlugField(blank=True, max_length=60, unique=True, null=True),
-
-        ),
-        migrations.AddField(
-            model_name="profile",
             name="timezone",
             field=models.CharField(blank=True, max_length=50),
         ),

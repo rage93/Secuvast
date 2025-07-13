@@ -15,12 +15,13 @@ class BasicInfoForm(forms.ModelForm):
     # también editamos datos del propio User
     first_name = forms.CharField(max_length=150, required=False, label="Nombre")
     last_name  = forms.CharField(max_length=150, required=False, label="Apellidos")
-    slug       = forms.SlugField(max_length=60, required=False, label="Slug")
 
     class Meta:
         model = Profile
         fields = [
-            "first_name", "last_name", "slug",
+
+            "first_name", "last_name",
+
             "gender", "birth_date",
             "location", "language", "skills",
         ]
@@ -38,7 +39,7 @@ class BasicInfoForm(forms.ModelForm):
         if user:
             self.fields["first_name"].initial = user.first_name
             self.fields["last_name"].initial  = user.last_name
-            self.fields["slug"].initial       = getattr(user.profile, "slug", "")
+
 
     def save(self, commit=True):
         profile = super().save(commit=False)
@@ -47,8 +48,7 @@ class BasicInfoForm(forms.ModelForm):
             if self.user:
                 self.user.first_name = self.cleaned_data["first_name"]
                 self.user.last_name  = self.cleaned_data["last_name"]
-                if self.cleaned_data.get("slug"):
-                    self.user.profile.slug = self.cleaned_data["slug"]
+
                 self.user.save()
         return profile
 

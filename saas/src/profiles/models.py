@@ -71,7 +71,5 @@ class Profile(models.Model):
         return f"{self.first_name} {self.last_name}".strip()
 
     def save(self, *args, **kwargs):
-        if not self.slug and self.user:
-            base = self.user.get_username()
-            self.slug = slugify(base)[:60]
+
         super().save(*args, **kwargs)
