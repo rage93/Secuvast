@@ -35,6 +35,7 @@ class Profile(models.Model):
         validators=[phone_regex], max_length=17, blank=True
     )
 
+    secondary_email  = models.EmailField(blank=True)
     bio          = models.TextField(blank=True) #  ← nuevo: lo pide el template
     language     = models.CharField(max_length=40, blank=True)
     skills       = models.CharField(
@@ -43,6 +44,10 @@ class Profile(models.Model):
     )
 
     # ───── preferencias ─────────────────────────────────────────────
+    timezone            = models.CharField(max_length=50, blank=True)
+    dark_mode           = models.BooleanField(default=False)
+    newsletter_opt_in   = models.BooleanField(default=True)
+
     is_visible          = models.BooleanField(default=True)
     two_factor_enabled  = models.BooleanField(default=False)
 
@@ -60,3 +65,6 @@ class Profile(models.Model):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
