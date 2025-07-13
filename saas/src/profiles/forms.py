@@ -19,7 +19,9 @@ class BasicInfoForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = [
+
             "first_name", "last_name",
+
             "gender", "birth_date",
             "location", "language", "skills",
         ]
@@ -38,6 +40,7 @@ class BasicInfoForm(forms.ModelForm):
             self.fields["first_name"].initial = user.first_name
             self.fields["last_name"].initial  = user.last_name
 
+
     def save(self, commit=True):
         profile = super().save(commit=False)
         if commit:
@@ -45,6 +48,7 @@ class BasicInfoForm(forms.ModelForm):
             if self.user:
                 self.user.first_name = self.cleaned_data["first_name"]
                 self.user.last_name  = self.cleaned_data["last_name"]
+
                 self.user.save()
         return profile
 

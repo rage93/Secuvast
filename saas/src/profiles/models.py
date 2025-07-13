@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 
 User = get_user_model()
 
@@ -23,6 +24,9 @@ class Profile(models.Model):
     # ───── datos básicos ─────────────────────────────────────────────
     first_name   = models.CharField(max_length=30, blank=True)
     last_name    = models.CharField(max_length=30, blank=True)
+
+    slug         = models.SlugField(max_length=60, unique=True, blank=True, null=True)
+
     gender       = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
     birth_date   = models.DateField(blank=True, null=True)
     location     = models.CharField(max_length=120, blank=True)
@@ -67,4 +71,5 @@ class Profile(models.Model):
         return f"{self.first_name} {self.last_name}".strip()
 
     def save(self, *args, **kwargs):
+
         super().save(*args, **kwargs)

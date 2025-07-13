@@ -27,6 +27,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="profile",
+
             name="timezone",
             field=models.CharField(blank=True, max_length=50),
         ),
