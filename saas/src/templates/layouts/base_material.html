@@ -1,0 +1,30 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  {#  ───── recursos CSS + meta tags ─────  #}
+  {% include "includes/head.html" %}
+  <title>{% block title %}Secuvast{% endblock %}</title>
+</head>
+
+<body class="g-sidenav-show bg-gray-100">
+
+  {#  ───── Sidebar lateral ─────  #}
+  {% include "includes/sidebar.html" %}
+
+  <main class="main-content position-relative max-height-vh-100 h-100">
+
+      {#  ───── Navbar interna ─────  #}
+      {% include "includes/navigation.html" %}
+
+      {#  ───── Contenido de cada página ─────  #}
+      {% block content %}{% endblock %}
+
+  </main>
+
+  {#  ───── JS base ─────  #}
+  {% include "includes/scripts.html" %}
+  {% block scripts %}{% endblock %}
+
+</body>
+</html>

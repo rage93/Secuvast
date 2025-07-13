@@ -1,0 +1,136 @@
+{% extends "layouts/base_material.html" %}
+{% load static crispy_forms_tags %}
+
+{% block title %}My profile – Secuvast{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-4">
+
+  {#  flash messages ----------------------------------------------------- #}
+  {% if messages %}
+    {% for m in messages %}
+      <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
+        {{ m }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="row">
+    <div class="col-lg-3">
+      {# -------- navegación lateral dentro de la página -------- #}
+      <div class="card position-sticky top-1">
+        <ul class="nav flex-column bg-white border-radius-lg p-3">
+          <li class="nav-item"><a class="nav-link text-dark" data-scroll href="#basic-info">
+            <i class="material-symbols-rounded text-lg me-2">person</i>Basic Info
+          </a></li>
+          <li class="nav-item pt-2"><a class="nav-link text-dark" data-scroll href="#visibility">
+            <i class="material-symbols-rounded text-lg me-2">visibility</i>Visibility
+          </a></li>
+          <li class="nav-item pt-2"><a class="nav-link text-dark" data-scroll href="#password">
+            <i class="material-symbols-rounded text-lg me-2">lock</i>Password
+          </a></li>
+          <li class="nav-item pt-2"><a class="nav-link text-dark" data-scroll href="#two-factor">
+            <i class="material-symbols-rounded text-lg me-2">security</i>2-Factor
+          </a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-9 mt-lg-0 mt-4">
+
+      {# -------------- BASIC INFO --------------------------------------- #}
+      <div class="card mb-4" id="basic-info">
+        <div class="card-header"><h5 class="mb-0">Basic info</h5></div>
+        <div class="card-body">
+
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ basic_form.non_field_errors }}
+
+            <div class="row">
+              <div class="col-md-6">{{ basic_form.first_name|as_crispy_field }}</div>
+              <div class="col-md-6">{{ basic_form.last_name|as_crispy_field }}</div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">{{ basic_form.gender|as_crispy_field }}</div>
+              <div class="col-md-4">{{ basic_form.birth_date|as_crispy_field }}</div>
+              <div class="col-md-4">{{ basic_form.language|as_crispy_field }}</div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">{{ basic_form.location|as_crispy_field }}</div>
+              <div class="col-md-6">{{ basic_form.phone_number|as_crispy_field }}</div>
+            </div>
+            <div class="mb-3">{{ basic_form.skills|as_crispy_field }}</div>
+
+            <button type="submit" name="basic_info_submit"
+                    class="btn bg-gradient-dark btn-sm float-end">
+              Save
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+      {# -------------- VISIBILITY --------------------------------------- #}
+      <div class="card mb-4" id="visibility">
+        <div class="card-header"><h5 class="mb-0">Profile visibility</h5></div>
+        <div class="card-body">
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-check form-switch">
+              {{ vis_form.is_visible }}
+              <label class="form-check-label ms-2" for="{{ vis_form.is_visible.id_for_label }}">
+                Public profile
+              </label>
+            </div>
+            <button type="submit" name="visibility_submit"
+                    class="btn bg-gradient-dark btn-sm mt-3">Save</button>
+          </form>
+
+        </div>
+      </div>
+
+      {# -------------- PASSWORD ----------------------------------------- #}
+      <div class="card mb-4" id="password">
+        <div class="card-header"><h5 class="mb-0">Change password</h5></div>
+        <div class="card-body">
+
+          <form method="post">
+            {% csrf_token %}
+            {{ pwd_form.non_field_errors }}
+            {{ pwd_form.old_password|as_crispy_field }}
+            {{ pwd_form.new_password1|as_crispy_field }}
+            {{ pwd_form.new_password2|as_crispy_field }}
+            <button type="submit" name="password_submit"
+                    class="btn bg-gradient-dark btn-sm mt-2">Update password</button>
+          </form>
+
+        </div>
+      </div>
+
+      {# -------------- TWO FACTOR --------------------------------------- #}
+      <div class="card mb-4" id="two-factor">
+        <div class="card-header"><h5 class="mb-0">Two-factor authentication</h5></div>
+        <div class="card-body">
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-check form-switch">
+              {{ two_form.two_factor_enabled }}
+              <label class="form-check-label ms-2" for="{{ two_form.two_factor_enabled.id_for_label }}">
+                Enable 2FA
+              </label>
+            </div>
+            <button type="submit" name="2fa_submit"
+                    class="btn bg-gradient-dark btn-sm mt-3">Save</button>
+          </form>
+
+        </div>
+      </div>
+
+    </div>    {# /col-lg-9 #}
+  </div>      {# /row #}
+</div>        {# /container #}
+{% endblock content %}

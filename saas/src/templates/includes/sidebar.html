@@ -1,0 +1,129 @@
+{% load static %}
+
+<aside style="z-index: 1;" class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
+  <div class="sidenav-header">
+    <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+    <a class="navbar-brand px-4 py-3 m-0" href="/">
+      <img src="{% static 'assets/img/logo-ct-dark.png' %}" class="navbar-brand-img" width="26" height="26" alt="main_logo">
+      <span class="ms-1 text-sm text-dark">Secuvast</span>
+    </a>
+  </div>
+
+  <hr class="horizontal dark mt-0 mb-2">
+  <div class="collapse navbar-collapse  w-auto h-auto" id="sidenav-collapse-main">
+    <ul class="navbar-nav">
+      {# ------------- PROFILE (login / logout) ------------- #}
+      {% if request.user.is_authenticated %}
+      <li class="nav-item mb-2 mt-0">
+        <a data-bs-toggle="collapse" href="#ProfileNav" class="nav-link text-dark" aria-controls="ProfileNav" role="button" aria-expanded="false">
+          <img src="{% static 'assets/img/team-3.jpg' %}" class="avatar">
+          <span class="nav-link-text ms-2 ps-1">{{ request.user.username }}</span>
+        </a>
+        <div class="collapse" id="ProfileNav">
+          <ul class="nav">
+            {# <li class="nav-item">
+              <a class="nav-link text-dark" href="{% url 'profiles:user_profile' %}">
+                <span class="sidenav-mini-icon"> MP </span>
+                <span class="sidenav-normal  ms-3  ps-1"> My Profile</span>
+              </a>
+            </li> #}
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="#">
+                <span class="sidenav-mini-icon"> L </span>
+                <span class="sidenav-normal  ms-3  ps-1"> Logout</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+      <hr class="horizontal dark mt-0">
+      {% endif %}
+
+```
+  {# ------------- DASHBOARD / OVERVIEW ------------- #}
+  <li class="nav-item">
+    <a class="nav-link text-dark {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
+      <i class="material-symbols-rounded opacity-5">dashboard</i>
+      <span class="nav-link-text ms-1 ps-1">Overview</span>
+    </a>
+  </li>
+
+  {# ------------- SALES (copiado del sidebar Flowbite) ------------- #}
+  <li class="nav-item">
+    <a data-bs-toggle="collapse" href="#salesMenu" class="nav-link text-dark" aria-controls="salesMenu" role="button" aria-expanded="false">
+      <i class="material-symbols-rounded opacity-5">shopping_cart</i>
+      <span class="nav-link-text ms-1 ps-1">Sales</span>
+    </a>
+    <div class="collapse" id="salesMenu">
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link text-dark" href="#">  {# TODO: replace with products URL #}
+            <span class="sidenav-mini-icon"> P </span>
+            <span class="sidenav-normal  ms-2  ps-1"> Products</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-dark" href="{% url 'factura_create' %}">
+            <span class="sidenav-mini-icon"> F </span>
+            <span class="sidenav-normal  ms-2  ps-1"> Nueva&nbsp;Factura</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-dark" href="#">  {# TODO: replace with invoice list URL #}
+            <span class="sidenav-mini-icon"> I </span>
+            <span class="sidenav-normal  ms-2  ps-1"> Invoice</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </li>
+
+  {# ------------- PAGES (settings / kanban / calendar) ------------- #}
+  <li class="nav-item">
+    <a data-bs-toggle="collapse" href="#pagesMenu" class="nav-link text-dark" aria-controls="pagesMenu" role="button" aria-expanded="false">
+      <i class="material-symbols-rounded opacity-5">layers</i>
+      <span class="nav-link-text ms-1 ps-1">Pages</span>
+    </a>
+    <div class="collapse" id="pagesMenu">
+      <ul class="nav">
+        <li class="nav-item"><a class="nav-link text-dark" href="#">Settings</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="#">Kanban</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="#">Calendar</a></li>
+      </ul>
+    </div>
+  </li>
+
+  {# ------------- COMPANY (mantiene URLs existentes) ------------- #}
+  {% if request.user.is_authenticated and request.user.profile.role == 'admin' or request.user.is_superuser or perms.companies.bypass_tenant_scope %}
+  <li class="nav-item">
+    <a data-bs-toggle="collapse" href="#companyMenu" class="nav-link text-dark" aria-controls="companyMenu" role="button" aria-expanded="false">
+      <i class="material-symbols-rounded opacity-5">business</i>
+      <span class="nav-link-text ms-1 ps-1">Company</span>
+    </a>
+    <div class="collapse" id="companyMenu">
+      <ul class="nav">
+        <li class="nav-item"><a class="nav-link text-dark" href="{% url 'company_info' %}"><span class="sidenav-mini-icon">I</span><span class="sidenav-normal ms-1 ps-1"> Info</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="{% url 'company_users' %}"><span class="sidenav-mini-icon">U</span><span class="sidenav-normal ms-1 ps-1"> Users</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" target="_blank" href="{% url 'billing_portal' %}"><span class="sidenav-mini-icon">B</span><span class="sidenav-normal ms-1 ps-1"> Billing</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="/"><span class="sidenav-mini-icon">V</span><span class="sidenav-normal ms-1 ps-1"> Visit&nbsp;Site</span></a></li>
+      </ul>
+    </div>
+  </li>
+  {% endif %}
+
+  {# ------------- MESSAGES ------------- #}
+  <li class="nav-item">
+    <a class="nav-link text-dark" href="#">  {# TODO: replace with messages URL #}
+      <i class="material-symbols-rounded opacity-5">mail</i>
+      <span class="nav-link-text ms-1 ps-1">Messages</span>
+      <span class="badge bg-primary ms-auto">4</span>
+    </a>
+  </li>
+
+  <li class="nav-item mt-3"><hr class="horizontal dark" /></li>
+  <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="material-symbols-rounded opacity-5">description</i><span class="nav-link-text ms-1 ps-1">Docs</span></a></li>
+</ul>
+```
+
+  </div>
+</aside>

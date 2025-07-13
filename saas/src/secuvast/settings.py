@@ -84,18 +84,12 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "slippers",
     'compressor',
-    # Django Rest Framework
-    "rest_framework",
-    "rest_framework.authtoken",
-    "corsheaders",
-    "drf_spectacular",
-    
+    'crispy_forms',
+    'crispy_bootstrap5',
+
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://159.203.53.170:3000",
-    "http://167.99.180.202:3000",
-]
+
 CORS_ALLOW_CREDENTIALS = True 
 
 MIDDLEWARE = [
@@ -137,6 +131,10 @@ TEMPLATES = [
         },
     },
 ]
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 ALLAUTH_UI_THEME = "dark"
 
